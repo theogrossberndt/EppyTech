@@ -1,6 +1,7 @@
 'use client';
 
-import Image from "next/image";
+import ExportedImage from "next-image-export-optimizer";
+import logoImageStatic from "/public/images/logo.jpg";
 import styles from "./header.module.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse } from '@fortawesome/free-solid-svg-icons'
@@ -21,8 +22,8 @@ const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
 				Call (203) 655-5177 for an appointment · Monday - Friday 8:30 am to 5:30 pm
 			</div>
 			<div className={styles.nav}>
-				<Image
-					src="/logo.jpg"
+				<ExportedImage
+					src={logoImageStatic}
 					alt="Eppy Tech Logo"
 					height={80}
 					width={300}

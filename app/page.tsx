@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from 'react';
-import Image from "next/image";
+import ExportedImage from "next-image-export-optimizer";
+import frontImageStatic from "/public/images/front.jpg";
+import logoImageStatic from "/public/images/logoCropped.jpg";
 import styles from "./page.module.css";
 import Header from "./lib/header.tsx";
 import Services from "./lib/services.tsx";
@@ -19,8 +21,8 @@ export default function Home() {
 			<Header selectedPage={0} refFunc={headerRefFunc}/>
 			<div className={styles.body}>
 				<div className={styles.about}>
-						<Image
-							src="/front.jpg"
+						<ExportedImage
+							src={frontImageStatic}
 							alt="Eppy Tech Building"
 							width={600}
 							height={500}
@@ -31,8 +33,8 @@ export default function Home() {
 					<div className={styles.aboutPane}>
 						<div>
 							<div className={styles.overlayDivCenter}>
-								<Image
-									src="/logoCropped.jpg"
+								<ExportedImage
+									src={logoImageStatic}
 									alt="Eppy Tech Building"
 									width={400}
 									height={400}

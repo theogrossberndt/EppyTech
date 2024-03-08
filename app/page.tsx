@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from 'react';
 import Image from "next/image";
 import styles from "./page.module.css";
 import Header from "./lib/header.tsx";
@@ -7,9 +10,16 @@ import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+	const [headerHeight, setHeaderHeight] = useState<number>(0);
+
+	const headerRefFunc = (el: HTMLDivElement) => {
+		if (el != null)
+			setHeaderHeight(el.offsetHeight);
+	}
+
 	return (
-		<main className={[]}>
-			<Header selectedPage={0}/>
+		<main className={}>
+			<Header selectedPage={0} refFunc={headerRefFunc}/>
 			<div className={styles.body}>
 				<div className={styles.about}>
 						<Image
@@ -48,7 +58,7 @@ export default function Home() {
 					</div>
 				</div>
 				<div className={styles.about}>
-					<Services services={["managed services", "help desk", "data protection", "cloud computing", "phone systems", "business it support", "repair services"]}>
+					<Services services={["managed services", "help desk", "data protection", "cloud computing", "phone systems", "business it support", "repair services"]} headerHeight={headerHeight}>
 						<div>
 							<h2>Managed Services: A Complete Solution For Small Businesses</h2><br/>
 							<p>When it comes to computer technology and IT support, small businesses in Connecticut have historically been at a disadvantage due to the high costs of hardware, setup, and staffing. It’s too expensive to have a full IT department in-house – and too much effort to manage everything yourself.  If this sounds like your situation, we have a solution: A complete managed IT services plan, where we function as your virtual CIO to give you the technology and support you require.

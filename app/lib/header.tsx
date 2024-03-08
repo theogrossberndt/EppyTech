@@ -6,15 +6,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse } from '@fortawesome/free-solid-svg-icons'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 
+type RefFuncType = (element: HTMLDivElement) => none
 type HeaderProps = {
 	selectedPage: number;
+	refFunc: RefFuncType;
 };
 
-const Header = ({selectedPage}: HeaderProps): ReactElement => {
+const Header = ({selectedPage, refFunc}: HeaderProps): ReactElement => {
 	const houseColor = selectedPage == 0 ? "#4977BB" : "#a4bbdd";
 	const contactColor = selectedPage == 1 ? "#4977BB" : "#a4bbdd";
 	return (
-		<div className={styles.header}>
+		<div className={styles.header} ref={refFunc}>
 			<div className={styles.banner}>
 				Call (203) 655-5177 for an appointment · Monday - Friday 8:30 am to 5:30 pm
 			</div>

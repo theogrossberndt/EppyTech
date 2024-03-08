@@ -1,0 +1,70 @@
+.main {
+	padding: 2vh 2vw;
+}
+
+.sep {
+	width: 1rem;
+}
+
+.inlineLabel {
+	font-size: 0.75rem;
+	padding-top: 1.5rem;
+	padding-bottom: 0.5rem;
+}
+
+.inlineLabel * {
+	display: inline-block;
+	padding: 0 1rem 0 0;
+}
+
+.inlineForm {
+	display: flex;
+	flex-direction: row;
+}
+
+.inlineForm>.block {
+	flex-grow: 1;
+}
+
+.inlineLabel p {
+	font-size: 1.25rem;
+}
+
+.block * {
+	display: block;
+}
+
+.form {
+	width: 50%;
+}
+
+.form input:not(.submitButton) {
+	font-size: 1rem;
+	padding: 1rem;
+	width: 100%;
+}
+
+.form label {
+	font-size: 0.75rem;
+	padding-bottom: 0.5rem;
+}
+
+.submitButton {
+	background-color: #4977BB;
+	font-size: 1.5rem;
+	padding: 2vh 2vw;
+	color: #fff;
+	margin: 1rem 0;
+	border: none;
+	box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+	cursor: pointer;
+}
+
+.submitButton:hover {
+	background-color: #5b85c2;
+}
+
+.submitButton:active {
+	background-color: #35598e;
+}
+

@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useLayoutEffect, useEffect, useMemo, useState, useRef } from 'react';
+import { flushSync } from 'react-dom';
+import debounce from 'lodash.debounce';
 import styles from "./services.module.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
@@ -16,21 +18,50 @@ const Services = ({services, children}: ServicesProps): ReactElement => {
 	const scrollParentRef = useRef(null);
 
 	const [selected, setSelected] = useState(0);
-	const [maxHeight, setMaxHeight] = useState(0);
+	const [maxHeight, setMaxHeight] = useState(-1);
+	const [isOpen, setIsOpen] = useState(false);
 
-	useEffect(() => {
+	const calculateMaxHeight = () => {
 		let newMaxHeight = 0;
 		refs.forEach(ref => {
 			if (ref.current.offsetHeight > newMaxHeight)
 				newMaxHeight = ref.current.offsetHeight;
 		});
 		setMaxHeight(newMaxHeight);
-	});
+		return newMaxHeight;
+	}
+
+	const resetAndCalcHeight = () => {
+		flushSync(() => setMaxHeight(0));
+		const newMaxHeight = calculateMaxHeight();
+		scrollParentRef.current.scrollTo(0, selected*newMaxHeight);
+	}
+
+	const debouncedCallback = useMemo(() => debounce(resetAndCalcHeight, 300), [setMaxHeight, refs, scrollParentRef, selected])
+
+	useLayoutEffect(() => {
+		window.addEventListener('resize', debouncedCallback);
+		if (maxHeight < 0){
+			calculateMaxHeight();
+			setIsOpen(true);
+		} else
+			calculateMaxHeight();
+		return () => {
+			window.removeEventListener('resize', debouncedCallback);
+			debouncedCallback.cancel();
+		};
+	}, [maxHeight, setIsOpen, calculateMaxHeight, debouncedCallback]);
+
+	const canShow = maxHeight > 0 && isOpen;
 
 	return (
 			<div className={styles.servicesCard}>
+				<div className={[styles.dropDown, styles.animatedMaxHeight].join(" ")} onClick={maxHeight < 0 ? false : () => setIsOpen(prevOpen => !prevOpen)}>
+					<h1 style={{color: "#fff"}}>Our Services</h1>
+					<FontAwesomeIcon icon={faCaretDown} className={[styles.caretIcon, canShow ? styles.flipped : ""].join(" ")}/>
+				</div>
 				<div className={styles.servicesBody}>
-					<div className={[styles.servicesSelect, styles.animatedMaxHeight].join(" ")} style={maxHeight <= 0 ? {maxHeight: 0} : {maxHeight: maxHeight}}>
+					<div className={[styles.servicesSelect, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight} : {maxHeight: 0}}>
 						{services.map((service, idx) => (
 							<div className={styles.serviceOptionWrapper}>
 								<div
@@ -46,9 +77,9 @@ const Services = ({services, children}: ServicesProps): ReactElement => {
 							</div>
 						))}
 					</div>
-					<div className={[styles.infoParent, styles.animatedMaxHeight].join(" ")} style={maxHeight > 0 ? {"maxHeight": maxHeight} : {maxHeight: 0}} ref={scrollParentRef}>
+					<div className={[styles.infoParent, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight} : {maxHeight: 0}} ref={scrollParentRef}>
 						{children.map((child, idx) => (
-							<div className={[styles.servicesInfo, styles.animatedMaxHeight].join(" ")} ref={refs[idx]} style={maxHeight > 0 ? {"minHeight": maxHeight} : {maxHeight: 0}}>
+							<div className={[styles.servicesInfo].join(" ")} ref={refs[idx]} style={{minHeight: maxHeight}}>
 								{child}
 							</div>
 						))}
@@ -57,28 +88,5 @@ const Services = ({services, children}: ServicesProps): ReactElement => {
 			</div>
 	);
 }
-
-/*
-				<div className={[styles.dropDown, styles.animatedMaxHeight, maxHeight <= 0 ? styles.fullRound : ""].join(" ")} style={maxHeight <= 0 ? {maxHeight: 0, boxShadow: "none"} : {maxHeight: maxHeight}}>
-					<h1 style={{color: "#fff"}}>Our Services</h1>
-					<FontAwesomeIcon icon={faCaretDown} style={{width: '1.5rem', height: '1.5rem'}}/>
-				</div>
-				{services.map((service, idx) => (
-						<div className={[styles.serviceOptionWrapper].join(" ")}>
-							<div
-								className={styles.serviceOption}
-								key={idx}
-								style={selected == idx ? {backgroundColor: '#4977bb', color: '#fff'} : []}
-								onClick={() => {
-									setSelected(idx);
-									refs[idx].current.scrollIntoView();
-								}}
-							>{service.toUpperCase()}</div>
-							<div className={styles.flag} style={selected == idx ? {backgroundColor: '#7AB4EA'} : []}></div>
-						</div>
-					)
-				)}
-
-*/
 
 export default Services;

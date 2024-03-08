@@ -14,7 +14,6 @@ type ServicesProps = {
 };
 
 const Services = ({services, headerHeight, children}: ServicesProps): ReactElement => {
-	const refs: Array<> = children.map(child => useState<Element | null>(null));
 	const pheights: Array<number> = children.map(child => 0);
 	const [heights, setHeights] = useState<Array<number>>(pheights);
 	const scrollParentRef = useRef<HTMLDivElement>(null)
@@ -26,7 +25,6 @@ const Services = ({services, headerHeight, children}: ServicesProps): ReactEleme
 	const onElementChanged = (element: HTMLDivElement, idx: number) => {
 		if (element != null && element.offsetHeight != heights[idx])
 			setHeights(heights => heights.map((el: number, elI: number) => (elI == idx ? element.offsetHeight : el)));
-		refs[idx][1](element);
 	}
 
 	const calculateMaxHeight = () => {
@@ -38,11 +36,11 @@ const Services = ({services, headerHeight, children}: ServicesProps): ReactEleme
 		if (newMaxHeight > 0)
 			setIsOpen(true);
 		if (isOpen)
-			scrollParentRef.current.scrollTo({top: selected*newMaxHeight, behavior: "instant"});
+			scrollParentRef.current.scroll({top: selected*newMaxHeight, behavior: "instant"});
 		return newMaxHeight;
 	};
 
-	const maxHeight: number = useMemo(calculateMaxHeight, [heights, setIsOpen, scrollParentRef, selected]);
+	const maxHeight: number = useMemo(calculateMaxHeight, [heights, setIsOpen, scrollParentRef]);
 
 	const debouncedCallback = useMemo(() => debounce(() => setHeights(pheights), 300, {leading: true, trailing: false}), [setHeights])
 
@@ -81,7 +79,7 @@ const Services = ({services, headerHeight, children}: ServicesProps): ReactEleme
 									style={selected == idx ? {backgroundColor: '#4977bb', color: '#fff'} : {}}
 									onClick={() => {
 										setSelected(idx);
-										scrollParentRef.current.scrollTo(0, idx*maxHeight);
+										scrollParentRef.current.scroll({top: idx*maxHeight, behavior: "smooth"});
 									}}
 								>{service.toUpperCase()}</div>
 								<div className={styles.flag} style={selected == idx ? {backgroundColor: '#7AB4EA'} : {}}></div>

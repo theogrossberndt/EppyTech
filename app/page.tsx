@@ -18,7 +18,7 @@ export default function Home() {
 	}
 
 	return (
-		<main className={}>
+		<main>
 			<Header selectedPage={0} refFunc={headerRefFunc}/>
 			<div className={styles.body}>
 				<div className={styles.about}>

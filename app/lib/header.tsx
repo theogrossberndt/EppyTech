@@ -6,13 +6,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse } from '@fortawesome/free-solid-svg-icons'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 
-type RefFuncType = (element: HTMLDivElement) => none
+type RefFuncType = (element: HTMLDivElement) => void
 type HeaderProps = {
 	selectedPage: number;
 	refFunc: RefFuncType;
 };
 
-const Header = ({selectedPage, refFunc}: HeaderProps): ReactElement => {
+const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
 	const houseColor = selectedPage == 0 ? "#4977BB" : "#a4bbdd";
 	const contactColor = selectedPage == 1 ? "#4977BB" : "#a4bbdd";
 	return (

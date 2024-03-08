@@ -42,7 +42,7 @@ export default function Home() {
 									priority
 								/>
 							</div>
-							<div className={[styles.overlayDiv]}>
+							<div className={styles.overlayDiv}>
 								<h1>About Us</h1><br/>
 								<p>
 								At Eppy Tech, we understand the challenges Connecticut small businesses face in attempting to afford, monitor and maintain their IT infrastructure. We offer a range of cost-effective tech support and managed IT services for small and mid-size businesses that will help you save time, protect and manage data more effectively, and increase employee productivity.

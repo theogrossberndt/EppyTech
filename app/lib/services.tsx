@@ -8,12 +8,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 
 type ServicesProps = {
-	services: Array<String>;
+	services: Array<string>;
 	headerHeight: number;
-	children: Array<ReactElement>;
+	children: Array<React.ReactElement>;
 };
 
-const Services = ({services, headerHeight, children}: ServicesProps): ReactElement => {
+const Services = ({services, headerHeight, children}: ServicesProps): React.ReactElement => {
 	const pheights: Array<number> = children.map(child => 0);
 	const [heights, setHeights] = useState<Array<number>>(pheights);
 	const scrollParentRef = useRef<HTMLDivElement>(null)
@@ -22,12 +22,12 @@ const Services = ({services, headerHeight, children}: ServicesProps): ReactEleme
 	const [selected, setSelected] = useState<number>(0);
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 
-	const onElementChanged = (element: HTMLDivElement, idx: number) => {
+	const onElementChanged = (element: HTMLDivElement | null, idx: number): void => {
 		if (element != null && element.offsetHeight != heights[idx])
 			setHeights(heights => heights.map((el: number, elI: number) => (elI == idx ? element.offsetHeight : el)));
 	}
 
-	const calculateMaxHeight = () => {
+	const calculateMaxHeight = (): number => {
 		let newMaxHeight: number = 0;
 		heights.forEach((height: number) => {
 			if (height > newMaxHeight)
@@ -35,7 +35,7 @@ const Services = ({services, headerHeight, children}: ServicesProps): ReactEleme
 		});
 		if (newMaxHeight > 0)
 			setIsOpen(true);
-		if (isOpen)
+		if (isOpen && scrollParentRef.current != null)
 			scrollParentRef.current.scroll({top: selected*newMaxHeight, behavior: "instant"});
 		return newMaxHeight;
 	};
@@ -56,11 +56,12 @@ const Services = ({services, headerHeight, children}: ServicesProps): ReactEleme
 
 	return (
 			<div className={styles.servicesCard} ref={cardRef}>
-				<div className={[styles.dropDown, styles.animatedMaxHeight].join(" ")} onClick={maxHeight < 0 ? false : () =>
+				<div className={[styles.dropDown, styles.animatedMaxHeight].join(" ")} onClick={maxHeight < 0 ? undefined : () =>
 					setIsOpen(prevOpen => {
 						if (!prevOpen){
 							const int = setInterval(() => {
-								window.scrollTo({top: cardRef.current.offsetTop-headerHeight-8});
+								if (cardRef.current != null)
+									window.scrollTo({top: cardRef.current.offsetTop-headerHeight-8});
 							}, 20);
 							setTimeout(() => clearInterval(int), 1000);
 						}
@@ -79,7 +80,8 @@ const Services = ({services, headerHeight, children}: ServicesProps): ReactEleme
 									style={selected == idx ? {backgroundColor: '#4977bb', color: '#fff'} : {}}
 									onClick={() => {
 										setSelected(idx);
-										scrollParentRef.current.scroll({top: idx*maxHeight, behavior: "smooth"});
+										if (scrollParentRef.current != null)
+											scrollParentRef.current.scroll({top: idx*maxHeight, behavior: "smooth"});
 									}}
 								>{service.toUpperCase()}</div>
 								<div className={styles.flag} style={selected == idx ? {backgroundColor: '#7AB4EA'} : {}}></div>

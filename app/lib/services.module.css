@@ -79,14 +79,14 @@
 	justify-content: flex-start;
 }
 
-.serviceOptionWrapper:hover .serviceOption {
-	background-color: #7a9ccd;
-}
-
 .flag {
 	width: 0.5vw;
 	background-color: #bcd9f4;
 	height: 100%;
+}
+
+.serviceOptionWrapper:hover .serviceOption {
+	background-color: #7a9ccd;
 }
 
 .serviceOptionWrapper:hover .flag {
@@ -108,4 +108,14 @@
 	color: #fff;
 	flex-grow: 1;
 	overflow: hidden;
+}
+
+@media (prefers-reduced-motion) {
+	.animatedMaxHeight {
+		transition: none;
+	}
+
+	.caretIcon {
+		transition: none;
+	}
 }

@@ -1,0 +1,94 @@
+[debug] [2024-02-28T22:56:24.694Z] ----------------------------------------------------------------------
+[debug] [2024-02-28T22:56:24.695Z] Command:       /usr/local/bin/node /home/theo/computerScience/eppyTech/eppy-tech/node_modules/.bin/firebase deploy --only hosting --project website-d2323 --debug
+[debug] [2024-02-28T22:56:24.696Z] CLI Version:   13.4.0
+[debug] [2024-02-28T22:56:24.696Z] Platform:      linux
+[debug] [2024-02-28T22:56:24.696Z] Node Version:  v20.10.0
+[debug] [2024-02-28T22:56:24.696Z] Time:          Wed Feb 28 2024 17:56:24 GMT-0500 (Eastern Standard Time)
+[debug] [2024-02-28T22:56:24.696Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-02-28T22:56:24.757Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-02-28T22:56:24.758Z] > authorizing via signed-in user (admin@eppytech.com)
+[debug] [2024-02-28T22:56:24.759Z] [iam] checking project website-d2323 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2024-02-28T22:56:24.760Z] > refreshing access token with scopes: []
+[debug] [2024-02-28T22:56:24.762Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2024-02-28T22:56:24.763Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-02-28T22:56:25.017Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2024-02-28T22:56:25.018Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2024-02-28T22:56:25.048Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/website-d2323:testIamPermissions [none]
+[debug] [2024-02-28T22:56:25.048Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/website-d2323:testIamPermissions x-goog-quota-user=projects/website-d2323
+[debug] [2024-02-28T22:56:25.049Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/website-d2323:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2024-02-28T22:56:25.311Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/website-d2323:testIamPermissions 200
+[debug] [2024-02-28T22:56:25.311Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/website-d2323:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2024-02-28T22:56:25.312Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/website-d2323 [none]
+[debug] [2024-02-28T22:56:25.635Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/website-d2323 200
+[debug] [2024-02-28T22:56:25.635Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/website-d2323 {"projectId":"website-d2323","projectNumber":"115535900985","displayName":"website","name":"projects/website-d2323","resources":{"hostingSite":"website-d2323","realtimeDatabaseInstance":"website-d2323-default-rtdb"},"state":"ACTIVE","etag":"1_c54e727a-3fff-456c-a09c-6085ca8bbe88"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 14.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2024-02-28T22:56:32.587Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/website-d2323/sites/website-d2323 [none]
+[debug] [2024-02-28T22:56:32.975Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/website-d2323/sites/website-d2323 200
+[debug] [2024-02-28T22:56:32.981Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/website-d2323/sites/website-d2323 {"name":"projects/website-d2323/sites/website-d2323","defaultUrl":"https://website-d2323.web.app","appId":"1:115535900985:web:ee1c8326ee5e08d057f8e8","type":"DEFAULT_SITE"}
+[info]    ▲ Next.js 14.1.0
+
+[info] 
+
+[info]    Creating an optimized production build ...
+
+[info] request to https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap failed, reason: 
+
+Retrying 1/3...
+
+[info]  ✓ Compiled successfully
+
+[info]    Linting and checking validity of types ...
+
+[info] 
+./app/lib/services.tsx
+43:56  Warning: React Hook useMemo has missing dependencies: 'isOpen' and 'selected'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+45:119  Warning: React Hook useMemo has a missing dependency: 'pheights'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+53:5  Warning: React Hook useEffect has a missing dependency: 'debouncedCallback'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+
+[info]    Collecting page data ...
+
+[info]    Generating static pages (0/4) ...
+
+[info]    Generating static pages (1/4) 
+
+[info]    Generating static pages (2/4) 
+
+[info]    Generating static pages (3/4) 
+
+[info]  ✓ Generating static pages (4/4) 
+
+[info]    Finalizing page optimization ...
+
+[info]    Collecting build traces ...
+
+[info] 
+
+[info] Route (app)                              Size     First Load JS
+┌ ○ /                                    32.2 kB         116 kB
+└ ○ /_not-found                          882 B          85.2 kB
++ First Load JS shared by all            84.3 kB
+  ├ chunks/69-cceabd1c6ad33c86.js        28.9 kB
+  ├ chunks/fd9d1056-9e625e8be9cf6216.js  53.4 kB
+  └ other shared chunks (total)          1.99 kB
+
+
+[info] 
+○  (Static)  prerendered as static content
+
+
+[debug] [2024-02-28T22:56:54.539Z] Error: ENOENT: no such file or directory, open '/home/theo/computerScience/eppyTech/eppy-tech/.next/server/middleware-manifest.json'
+[error] 
+[error] Error: An unexpected error has occurred.

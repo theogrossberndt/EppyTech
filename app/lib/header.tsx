@@ -16,6 +16,7 @@ type HeaderProps = {
 const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
 	const houseColor = selectedPage == 0 ? "#4977BB" : "#a4bbdd";
 	const contactColor = selectedPage == 1 ? "#4977BB" : "#a4bbdd";
+
 	return (
 		<div className={styles.header} ref={refFunc}>
 			<div className={styles.banner}>
@@ -31,14 +32,14 @@ const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
 				/>
 				<button className={styles.button} onClick={()=>{}}>FREE CONSULTATION</button>
 				<div className={styles.navIcons}>
-					<div className={styles.navIconButton} onClick={()=>{}}>
+					<button className={styles.navIconButton} onClick={()=>{}}>
 						<FontAwesomeIcon icon={faHouse} style={{color: houseColor, width: '2em', height: '2em'}}/>
 						<span className={styles.tooltiptext}>Home</span>
-					</div>
-					<div className={styles.navIconButton} onClick={()=>{}}>
+					</button>
+					<button className={styles.navIconButton} onClick={()=>{}}>
 						<FontAwesomeIcon icon={faPaperPlane} style={{color: contactColor, width: '2em', height: '2em'}}/>
 						<span className={styles.tooltiptext}>Contact Us</span>
-					</div>
+					</button>
 				</div>
 			</div>
 		</div>

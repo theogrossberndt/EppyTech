@@ -9,14 +9,16 @@ export const metadata: Metadata = {
   description: "A website for Eppy Tech in Darien, CT"
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en">
-      <body className={inter.className} suppressHydrationWarning>{children}</body>
-    </html>
-  );
+type RootProps = {
+	children: Array<React.ReactNode>;
+};
+
+export default function RootLayout({children}: RootProps) {
+	return (
+		<html lang="en">
+			<body className={inter.className} suppressHydrationWarning>
+				{children}
+			</body>
+		</html>
+	);
 }

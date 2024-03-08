@@ -41,6 +41,9 @@
 	background: #fff;
 	-webkit-transition: background 0.5s;
 	transition: background 0.5s;
+	border: none;
+	font-size: 1em;
+	font-weight: bold;
 	cursor: pointer;
 }
 
@@ -55,7 +58,6 @@
 }
 
 .tooltiptext {
-	visibility: hidden;
 	opacity: 0;
 	background-color: #4977BB;
 	color: #fff;
@@ -71,7 +73,6 @@
 }
 
 .navIconButton:hover .tooltiptext {
-	visibility: visible;
 	opacity: 1;
 	-webkit-transition: opacity 0.5s;
 	transition: opacity 0.5s;

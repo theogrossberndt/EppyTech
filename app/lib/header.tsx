@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import ExportedImage from "next-image-export-optimizer";
 import logoImageStatic from "/public/images/logo.jpg";
 import styles from "./header.module.css";
@@ -14,6 +15,7 @@ type HeaderProps = {
 };
 
 const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
+	const router = useRouter();
 	const houseColor = selectedPage == 0 ? "#4977BB" : "#a4bbdd";
 	const contactColor = selectedPage == 1 ? "#4977BB" : "#a4bbdd";
 
@@ -29,14 +31,16 @@ const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
 					height={80}
 					width={300}
 					priority
+					onClick={() => router.push("/")}
+					style={{cursor: "pointer"}}
 				/>
-				<button className={styles.button} onClick={()=>{}}>FREE CONSULTATION</button>
+				<button className={styles.button} onClick={() => router.push("/contact")}>FREE CONSULTATION</button>
 				<div className={styles.navIcons}>
-					<button className={styles.navIconButton} onClick={()=>{}}>
+					<button className={styles.navIconButton} onClick={()=> router.push("/")}>
 						<FontAwesomeIcon icon={faHouse} style={{color: houseColor, width: '2em', height: '2em'}}/>
 						<span className={styles.tooltiptext}>Home</span>
 					</button>
-					<button className={styles.navIconButton} onClick={()=>{}}>
+					<button className={styles.navIconButton} onClick={()=> router.push("/contact")}>
 						<FontAwesomeIcon icon={faPaperPlane} style={{color: contactColor, width: '2em', height: '2em'}}/>
 						<span className={styles.tooltiptext}>Contact Us</span>
 					</button>

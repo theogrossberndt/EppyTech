@@ -1,72 +1,178 @@
 "use client"
 
-import { useState, FormEvent } from 'react';
+import { useRef, useState, FormEvent } from 'react';
 import styles from "./page.module.css";
 import Header from "/app/lib/header.tsx";
+import SlidingCard from "/app/lib/slidingCard.tsx";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
+import { AnimatePresence, motion } from 'framer-motion';
+import ChildMeasurer from "/app/lib/childMeasurer.tsx";
+import emailjs from '@emailjs/browser';
 
 export default function ContactPage(){
-	const [errors, setErrors] = useState(null);
+	const formRef = useRef(null);
+	const cardRef = useRef(null);
+	const [defaultWidth, setDefaultWidth] = useState<number>(0);
+	const [errors, setErrors] = useState({});
+	// 0: fillable, 1: loading (sending email), 2: submitted
+	const [formState, setFormState] = useState<number>(0);
+	const nameToReadable = {fname: "first name", lname: "last name", email: "email", phone: "phone number", message: "message"};
 
-	const onSubmit = (event: FormEvent<HTMLFormElement>): void => {
+
+	const onSubmit = async (event: FormEvent<HTMLFormElement>): void => {
 		event.preventDefault();
+		if (formState != 0)
+			return;
 		const formData = new FormData(event.currentTarget);
-		console.log(formData);
+		let newErrors = {}
+//		formData.forEach((val, key) => {
+//			if (val.trim().length == 0){
+//				if (!newErrors[key])
+//					newErrors[key] = [];
+//				newErrors[key].push("The " + nameToReadable[key] + " field is required.");
+//			}
+//		});
+		setErrors(newErrors);
+		if (Object.keys(newErrors).length == 0 && formRef.current){
+			console.log("Sending email");
+			setFormState(1);
+			wait()
+//			emailjs.sendForm("service_6omc8df","template_2e6g0zv", formRef.current, {publicKey: "lDCeJnFwBEYnQGVHD"})
+				.then(
+					() => {
+						console.log("success");
+						if (cardRef.current){
+							setFormState(2);
+							cardRef.current.goForward("success");
+						} else
+							setFormState(0);
+					},
+					(error) => {
+						console.log(error);
+						setErrors({form: ["The form could not be submitted. Please email admin@eppytech.com manually and mention this error.", error]});
+						setFormState(0);
+					});
+		}
+	}
+
+	const wait = () => {
+		return new Promise((resolve, reject) => setTimeout(() => {
+			resolve('done');
+		}, 2000));
 	}
 
 	const headerRefFunc = (element: HTMLDivElement): void => {
 	}
 
+	const formField = (label: string, type: string, key: string): HTMLDivElement => {
+		return (
+			<div className={[styles.block, errors[key] ? styles.error : ""].join(" ")}>
+				<label htmlFor={key}>{label}</label>
+				<input type={type} id={key} name={key} onInput={() => {
+					if (errors[key])
+						setErrors(oldErrors => Object.keys(oldErrors).filter(ek => ek != key).reduce((res, ek) => (res[ek] = oldErrors[ek], res), {}))
+				}}/>
+				<AnimatePresence>
+					{errors[key] && errors[key].map((err, idx) => (
+						<motion.div key={idx} animate={{height: 'auto'}} initial={{height: 0}} exit={{height: 0}} style={{overflow: 'hidden'}}>
+							<div className={styles.errorMsg}>
+								<FontAwesomeIcon icon={faCircleExclamation} style={{width: '1rem', height: '1rem', paddingRight: '0.5rem'}}/>
+								{err}
+							</div>
+						</motion.div>
+					))}
+				</AnimatePresence>
+			</div>
+		);
+	}
+
+	console.log(defaultWidth);
+	if (formRef.current)
+		console.log(formRef.current.offsetWidth);
+
+	const genForm = () => (
+		<form className={styles.form} onSubmit={onSubmit} ref={formRef}>
+			<fieldset disabled={formState != 0}>
+				<AnimatePresence>
+					{errors['form'] && errors['form'].map((err, idx) => (
+						<motion.div key={idx} animate={{height: 'auto'}} initial={{height: 0}} exit={{height: 0}} style={{overflow: 'hidden'}}>
+							<div className={styles.errorMsg}>
+								<FontAwesomeIcon icon={faCircleExclamation} style={{width: '1rem', height: '1rem', paddingRight: '0.5rem'}}/>
+								{err}
+							</div>
+						</motion.div>
+					))}
+				</AnimatePresence>
+				<div className={styles.inlineLabel}>
+					<p>Name</p>
+					(required)
+				</div>
+				<div className={styles.inlineForm}>
+					{formField("First Name", "text", "fname")}
+					{formField("Last Name", "text", "lname")}
+				</div>
+				<div className={styles.inlineLabel}>
+					<p>Email</p>
+					(required)
+				</div>
+				{formField("Please provide an email address where you can be reached.", "email", "email")}
+				<div className={styles.inlineLabel}>
+					<p>Phone</p>
+					(required)
+				</div>
+				{formField("Please provide a phone number where you can be reached.", "tel", "phone")}
+				<div className={styles.inlineLabel}>
+					<p>Message</p>
+					(required)
+				</div>
+				{formField("Please provide a brief description of your concern or need.", "text", "message")}
+				<motion.input animate={defaultWidth > 0 ? {width: formState == 0 ? defaultWidth : 2*defaultWidth} : {}}
+					type="submit" value={formState == 0 ? "SUBMIT" : "SUBMITTING"} className={styles.submitButton}
+					ref={el => {
+						if (el)
+							setDefaultWidth(el.offsetWidth);
+					}}/>
+			</fieldset>
+		</form>
+	);
+
+	const setMaxDimsHandler = (maxDims) => {
+		console.log("max dims: ", maxDims);
+	}
+
+	const test = () => (
+					<ChildMeasurer setMaxDimensions={setMaxDimsHandler} show={false} className={styles.formCard}>
+						{genForm()}
+						<div id="success">
+							The form has been submitted
+						</div>
+					</ChildMeasurer>
+	);
+
+	const good = () => (
+					<SlidingCard ref={cardRef} className={styles.formCard}>
+						{genForm()}
+						<div id="success">
+							The form has been submitted
+						</div>
+					</SlidingCard>
+	);
+
 	return (
 		<div>
 			<Header selectedPage={1} refFunc={headerRefFunc}/>
-			<main className={styles.main}>
+			<main className={styles.main} id="main">
 				<h1>Get A Free Consultation</h1>
 				<br/>
 				<p>Fill out the form to receive a free consultation and learn how we can help make your technology worry-free!</p>
-				<form className={styles.form} onSubmit={onSubmit}>
-					<div className={styles.inlineLabel}>
-						<p>Name</p>
-						(required)
-					</div>
-					<div className={styles.inlineForm}>
-						<div className={styles.block}>
-							<label for="fname">First Name</label>
-							<input type="text" id="fname" name="fname" required/>
-						</div>
-						<div className={styles.sep}/>
-						<div className={styles.block}>
-							<label for="lname">Last Name</label>
-							<input type="text" id="lname" name="lname" required/>
-						</div>
-					</div>
-					<div className={styles.inlineLabel}>
-						<p>Email</p>
-						(required)
-					</div>
-					<div className={styles.block}>
-						<label for="email">Please provide an email address where you can be reached.</label>
-						<input type="email" id="email" name="email" required/>
-					</div>
-					<div className={styles.inlineLabel}>
-						<p>Phone</p>
-						(required)
-					</div>
-					<div className={styles.block}>
-						<label for="phone">Please provide a phone number where you can best be reached.</label>
-						<input type="tel" id="phone" name="phone" required/>
-					</div>
-					<div className={styles.inlineLabel}>
-						<p>Message</p>
-						(required)
-					</div>
-					<div className={styles.block}>
-						<label for="message">Please provide a brief description of your concern or need.</label>
-						<input type="text" id="message" name="message" required/>
-					</div>
-
-					<input type="submit" value="SUBMIT" className={styles.submitButton}/>
-				</form>
+				{good()}
 			</main>
 		</div>
 	);
 }
+
+//					<motion.input animate={{width: "auto"}} type="submit" value={formState == 0 ? "SUBMIT" : "SUBMITTING"} className={styles.submitButton} disabled={formState != 0}/>
+
+/*
+*/

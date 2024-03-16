@@ -10,7 +10,7 @@ const SlidingCard = forwardRef((props, ref) => {
 	const [direction, setDirection] = useState<number>(1)
 	const [selected, setSelected] = useState<number>(-1);
 	const [maxDims, setMaxDims] = useState<>({width: 0, height: 0});
-	const [cardDims, setCardDims] = useState<>({width: 0, height: 0});
+	const [cardDims, setCardDims] = useState<>({width: 0, height: 0, paddingX: 0, paddingY: 0});
 
 	useImperativeHandle(ref, () => ({
 		goForward(id){
@@ -55,7 +55,12 @@ const SlidingCard = forwardRef((props, ref) => {
 			const availWidth = cardRef.current.offsetWidth - paddingX - borderX;
 			const availHeight = cardRef.current.offsetHeight - paddingY - borderY;
 
-			setCardDims({width: availWidth, height: availHeight});
+			setCardDims({width: cardRef.current.offsetWidth, height: cardRef.current.offsetHeight, paddingX: paddingX, paddingY: paddingY});
+
+			let newMaxWidth = maxNonZero(availWidth, maxDims.width);
+			let newMaxHeight = maxNonZero(availHeight, maxDims.height);
+			if (newMaxWidth != maxDims.width || newMaxHeight != maxDims.height)
+				setMaxDims(currentMaxDims => ({width: maxNonZero(availWidth, currentMaxDims.width), height: maxNonZero(availHeight, currentMaxDims.height)}));
 		}
 	}, [cardRef.current])
 
@@ -68,17 +73,26 @@ const SlidingCard = forwardRef((props, ref) => {
 		return min == null ? 0 : min;
 	}
 
+	const maxNonZero = (...args) => {
+		let max = null;
+		args.forEach(arg => {
+			if ((arg > 0 && max == null) || (arg > 0 && arg > max))
+				max = arg;
+		});
+		return max == null ? 0 : max;
+	}
+
 	const setMaxDimsHandler = (childMaxDims) => {
-		console.log("childMaxDims:", childMaxDims);
+//		console.log("childMaxDims:", childMaxDims);
 		if (maxDims.width == 0 || maxDims.height == 0){
 			setSelected(0);
 			setDirection(0);
 		}
 
 //		console.log("cdw", cardDims.width, "cmdw", childMaxDims.width, "mdw", maxDims.width);
-		let newMaxWidth = minNonZero(cardDims.width, childMaxDims.width, maxDims.width);
+		let newMaxWidth = maxNonZero(cardDims.width, childMaxDims.width, maxDims.width);
 //		console.log("cdh", cardDims.height, "cmdh", childMaxDims.height, "mdh", maxDims.height);
-		let newMaxHeight = minNonZero(cardDims.height, childMaxDims.height, maxDims.height);
+		let newMaxHeight = maxNonZero(cardDims.height, childMaxDims.height, maxDims.height);
 //		console.log("nmw: ", newMaxWidth, "nmh: ", newMaxHeight);
 
 		if (newMaxWidth != maxDims['width'] || newMaxHeight != maxDims['height'])
@@ -108,17 +122,17 @@ const SlidingCard = forwardRef((props, ref) => {
 //	console.log("cd: ", cardDims);
 
 	return (
-		<div className={[styles.parent, props.className].join(" ")} style={{minWidth: maxDims.width, minHeight: maxDims.height}} ref={cardRef}>
+		<div className={[styles.parent, props.className].join(" ")} style={{minHeight: cardDims.paddingY + maxDims.height, minWidth: cardDims.paddingX + maxDims.width}} ref={cardRef}>
 			<ChildMeasurer setMaxDimensions={setMaxDimsHandler} show={false}>
 				{props.children}
 			</ChildMeasurer>
-			<AnimatePresence initial={false} custom={direction} style={{width: '100%', height: '100%'}}>
+			<AnimatePresence initial={false} custom={direction}>
 				{props.children.map((child, idx) => idx == selected && (
-					<motion.div key={idx} style={{minWidth: maxDims.width, minHeight: maxDims.height, position: 'absolute'}}
-						variants={variants} custom={direction} initial="initial" animate="target" exit="exit" transition={transition}
-					>
-						{child}
-					</motion.div>
+						<motion.div key={idx} style={{minWidth: maxDims.width, minHeight: maxDims.height, position: 'absolute'}}
+							variants={variants} custom={direction} initial="initial" animate="target" exit="exit" transition={transition}
+						>
+							{child}
+						</motion.div>
 				))}
 			</AnimatePresence>
 		</div>
@@ -126,7 +140,3 @@ const SlidingCard = forwardRef((props, ref) => {
 });
 
 export default SlidingCard;
-
-/*
-
-*/

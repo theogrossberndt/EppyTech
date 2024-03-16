@@ -1,0 +1,46 @@
+.navIconButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	padding: 2vh;
+	background: #fff;
+	-webkit-transition: background 0.5s;
+	transition: background 0.5s;
+	border: none;
+	font-size: 1em;
+	font-weight: bold;
+	cursor: pointer;
+	position: relative;
+}
+
+.navIconButton:hover {
+	background: #f0f0f0;
+	-webkit-transition: background 0.5s;
+	transition: background 0.5s;
+}
+
+.navIconButton:active {
+	background: #e0e0e0;
+}
+
+.tooltiptext {
+	opacity: 0;
+	background-color: #4977BB;
+	color: #fff;
+	text-align: center;
+	padding: 0.5vh 2vw;
+	border-radius: 6px;
+ 
+	z-index: 1;
+	-webkit-transition: opacity 0.5s;
+	transition: opacity 0.5s;
+	position: relative;
+	left: -50%;
+}
+
+.navIconButton:hover .tooltiptext {
+	opacity: 1;
+	-webkit-transition: opacity 0.5s;
+	transition: opacity 0.5s;
+}

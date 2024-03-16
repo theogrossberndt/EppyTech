@@ -6,9 +6,13 @@ import Header from "/app/lib/header.tsx";
 import SlidingCard from "/app/lib/slidingCard.tsx";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { AnimatePresence, motion } from 'framer-motion';
 import ChildMeasurer from "/app/lib/childMeasurer.tsx";
+import IconButton from "/app/lib/iconButton.tsx";
 import emailjs from '@emailjs/browser';
+import ExportedImage from "next-image-export-optimizer";
+import logoImageStatic from "/public/images/logoCropped.jpg";
 
 export default function ContactPage(){
 	const formRef = useRef(null);
@@ -128,7 +132,7 @@ export default function ContactPage(){
 				</div>
 				{formField("Please provide a brief description of your concern or need.", "text", "message")}
 				<motion.input animate={defaultWidth > 0 ? {width: formState == 0 ? defaultWidth : 2*defaultWidth} : {}}
-					type="submit" value={formState == 0 ? "SUBMIT" : "SUBMITTING"} className={styles.submitButton}
+					type="submit" value={formState == 0 ? "SUBMIT" : "SUBMITTING"} className={styles.button}
 					ref={el => {
 						if (el)
 							setDefaultWidth(el.offsetWidth);
@@ -137,27 +141,10 @@ export default function ContactPage(){
 		</form>
 	);
 
-	const setMaxDimsHandler = (maxDims) => {
-		console.log("max dims: ", maxDims);
+	const goBack = () => {
+		setFormState(0);
+		cardRef.current.goBackward("form");
 	}
-
-	const test = () => (
-					<ChildMeasurer setMaxDimensions={setMaxDimsHandler} show={false} className={styles.formCard}>
-						{genForm()}
-						<div id="success">
-							The form has been submitted
-						</div>
-					</ChildMeasurer>
-	);
-
-	const good = () => (
-					<SlidingCard ref={cardRef} className={styles.formCard}>
-						{genForm()}
-						<div id="success">
-							The form has been submitted
-						</div>
-					</SlidingCard>
-	);
 
 	return (
 		<div>
@@ -166,13 +153,34 @@ export default function ContactPage(){
 				<h1>Get A Free Consultation</h1>
 				<br/>
 				<p>Fill out the form to receive a free consultation and learn how we can help make your technology worry-free!</p>
-				{good()}
+				<SlidingCard ref={cardRef} className={styles.formCard}>
+					<div id="form" style={{padding: '0.5rem 1rem'}}>
+						{genForm()}
+					</div>
+					<div id="success" style={{padding: '0.5rem'}}>
+						<IconButton onClick={goBack}>
+							<FontAwesomeIcon icon={faChevronLeft} style={{width: '1rem', height: '1rem'}}/>
+						</IconButton>
+						<div>
+							<div className={styles.overlayDiv} style={{filter: 'blur(16px)', opacity: 0.5}}>
+								<ExportedImage
+									src={logoImageStatic}
+									alt="Eppy Tech Building"
+									width={400}
+									height={400}
+									priority
+								/>
+							</div>
+							<div className={styles.overlayDiv}>
+								<h3>
+								Thank you!  Your information has been submitted. A member of our team will be in touch.
+								</h3>
+								<button className={styles.button} onClick={goBack} style={{marginTop: '1rem'}}>Submit Another Form</button>
+							</div>
+						</div>
+					</div>
+				</SlidingCard>
 			</main>
 		</div>
 	);
 }
-
-//					<motion.input animate={{width: "auto"}} type="submit" value={formState == 0 ? "SUBMIT" : "SUBMITTING"} className={styles.submitButton} disabled={formState != 0}/>
-
-/*
-*/

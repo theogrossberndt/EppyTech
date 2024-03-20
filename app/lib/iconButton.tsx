@@ -1,9 +1,9 @@
 import styles from "./iconButton.module.css";
 
 type IconButtonProps = {
-	tooltip: string;
-	children: React.ReactNode;
-	onClick: Function;
+	tooltip?: string;
+	children?: React.ReactNode | Array<React.ReactNode>;
+	onClick?: React.MouseEventHandler<HTMLElement>;
 }
 
 const IconButton = ({tooltip, children, onClick}: IconButtonProps) => {

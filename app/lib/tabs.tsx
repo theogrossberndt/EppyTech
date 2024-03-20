@@ -1,6 +1,4 @@
-import ReactNode from 'react';
-
-export function ManagedServices(): ReactNode {
+export function ManagedServices(): React.ReactElement {
 	return (
 		<div>
 			<h2>Managed Services: A Complete Solution For Small Businesses</h2>
@@ -33,7 +31,7 @@ export function ManagedServices(): ReactNode {
 	);
 }
 
-export function HelpDesk(): ReactNode {
+export function HelpDesk(): React.ReactElement {
 	return (
 		<div>
 			<h2>Expert Technical Support Plans: The Computer Help You Need</h2>
@@ -71,7 +69,7 @@ export function HelpDesk(): ReactNode {
 	);
 }
 
-export function DataProtection(): ReactNode {
+export function DataProtection(): React.ReactElement {
 	return (
 		<div>
 			<h2>Could Your Company Endure the Loss of Its Critical Data?</h2>
@@ -105,7 +103,7 @@ export function DataProtection(): ReactNode {
 	);
 }
 
-export function CloudComputing(): ReactNode {
+export function CloudComputing(): React.ReactElement {
 	return (
 		<div>
 			<h2>Hosted &amp; Cloud Services, Handled By the Pros</h2>
@@ -138,7 +136,7 @@ export function CloudComputing(): ReactNode {
 	);
 }
 
-export function PhoneSystems(): ReactNode {
+export function PhoneSystems(): React.ReactElement {
 	return(
 		<div>
 			<h2>VoIP: A Better Choice for Business Communication</h2><br/>
@@ -171,7 +169,7 @@ export function PhoneSystems(): ReactNode {
 	);
 }
 
-export function BusinessITSupport(): ReactNode {
+export function BusinessITSupport(): React.ReactElement {
 	return (
 		<div>
 			<h2>Business IT Support: The Economical, Sensible Solution</h2><br/>
@@ -204,7 +202,7 @@ export function BusinessITSupport(): ReactNode {
 	);
 }
 
-export function RepairServices(): ReactNode {
+export function RepairServices(): React.ReactElement {
 	return (
 		<div>
 			<p>Eppy Tech is a complete break-fix shop with expertise in laptop, desktop and printer repair.</p>

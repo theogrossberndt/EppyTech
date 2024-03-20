@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState, FormEvent } from 'react';
+import { useEffect, useRef, useState, FormEvent, ReactElement } from 'react';
 import styles from "./page.module.css";
 import Header from "@/app/lib/header.tsx";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -13,34 +13,35 @@ import ExportedImage from "next-image-export-optimizer";
 import logoImageStatic from "/public/images/logoCropped.jpg";
 
 export default function ContactPage(){
-	const formRef = useRef(null);
+	const formRef = useRef<HTMLFormElement>(null);
 	const [defaultWidth, setDefaultWidth] = useState<number>(0);
-	const [errors, setErrors] = useState({});
+	const [errors, setErrors] = useState<{[key: string]: Array<string>}>({});
 	// 0: fillable, 1: loading (sending email), 2: submitted
 	const [formState, setFormState] = useState<number>(0);
 	const [maxDimensions, setMaxDimensions] = useState({width: 0, height: 0});
-	const nameToReadable = {fname: "first name", lname: "last name", email: "email", phone: "phone number", message: "message"};
+	const nameToReadable: {[key: string]: string} = {fname: "first name", lname: "last name", email: "email", phone: "phone number", message: "message"};
 
 
-	const onSubmit = async (event: FormEvent<HTMLFormElement>): void => {
+	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		if (formState != 0)
 			return;
 
-		const formData = new FormData(event.currentTarget);
+		const formData: FormData = new FormData(event.currentTarget);
 
-		let newErrors = {}
+		let newErrors: {[key: string]: Array<string>} = {}
 		/////////////////// Validation
 		if (true)
-			formData.forEach((val, key) => {
-				if (val.trim().length == 0){
+			Object.keys(nameToReadable).forEach((key: string) => {
+				const val = formData.get(key) as string | null;
+				if (val == null || val.trim().length == 0){
 					if (!newErrors[key])
 						newErrors[key] = [];
 					newErrors[key].push("The " + nameToReadable[key] + " field is required.");
 				}
 			});
 		setErrors(newErrors);
-		if (Object.keys(newErrors).length == 0 && formRef.current){
+		if (Object.keys(newErrors).length == 0){
 			setFormState(1);
 			wait()
 //			emailjs.sendForm("service_6omc8df","template_2e6g0zv", formRef.current, {publicKey: "lDCeJnFwBEYnQGVHD"})
@@ -60,13 +61,20 @@ export default function ContactPage(){
 		}, 2000));
 	}
 
-	const formField = (label: string, type: string, key: string): HTMLDivElement => {
+	const formField = (label: string, type: string, key: string): ReactElement => {
 		return (
 			<div className={[styles.block, errors[key] ? styles.error : ""].join(" ")}>
 				<label htmlFor={key}>{label}</label>
 				<input type={type} id={key} name={key} onInput={() => {
 					if (errors[key])
-						setErrors(oldErrors => Object.keys(oldErrors).filter(ek => ek != key).reduce((res, ek) => (res[ek] = oldErrors[ek], res), {}))
+						setErrors((oldErrors: {[key: string]: Array<string>}) => {
+							let newErrors: {[key: string]: Array<string>} = {}
+							Object.keys(oldErrors).forEach((nKey: string) => {
+								if (key != nKey)
+									newErrors[key] = oldErrors[key];
+							});
+							return newErrors;
+						});
 				}}/>
 				<AnimatePresence>
 					{errors[key] && errors[key].map((err, idx) => (
@@ -86,14 +94,16 @@ export default function ContactPage(){
 		if (!formRef.current)
 			return;
 		const resizeObserver = new ResizeObserver(() => {
-			const cs = getComputedStyle(formRef.current);
-			var paddingX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
-			var paddingY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+			if (formRef.current != null){
+				const cs = getComputedStyle(formRef.current);
+				var paddingX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+				var paddingY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
 
-			var borderX = parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth);
-			var borderY = parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth);
+				var borderX = parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth);
+				var borderY = parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth);
 
-			setMaxDimensions({width: formRef.current.offsetWidth-paddingX-borderX, height: formRef.current.offsetHeight-paddingY-borderY});
+				setMaxDimensions({width: formRef.current.offsetWidth-paddingX-borderX, height: formRef.current.offsetHeight-paddingY-borderY});
+			}
 		});
 		resizeObserver.observe(formRef.current);
 		return () => resizeObserver.disconnect();

@@ -1,5 +1,9 @@
 .main {
 	padding: 2vh 2vw;
+	display: flex;
+	flex-direction: row;
+	gap: 2vw;
+	justify-content: space-around;
 }
 
 .formCard {
@@ -8,7 +12,7 @@
 	align-items: center;
 	background-color: #fff;
 	border-radius: 1rem;
-	width: 50%;
+	width: 100%;
 	position: relative;
 	margin-top: 1rem;
 	box-shadow: 0px 4px 16px rgba(73, 120, 187, 0.3);

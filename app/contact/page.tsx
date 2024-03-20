@@ -70,8 +70,8 @@ export default function ContactPage(){
 						setErrors((oldErrors: {[key: string]: Array<string>}) => {
 							let newErrors: {[key: string]: Array<string>} = {}
 							Object.keys(oldErrors).forEach((nKey: string) => {
-								if (key != nKey)
-									newErrors[key] = oldErrors[key];
+								if (key !== nKey)
+									newErrors[nKey] = oldErrors[nKey];
 							});
 							return newErrors;
 						});

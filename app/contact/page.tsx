@@ -2,14 +2,13 @@
 
 import { useEffect, useRef, useState, FormEvent } from 'react';
 import styles from "./page.module.css";
-import Header from "/app/lib/header.tsx";
-import SlidingCard from "/app/lib/slidingCard.tsx";
+import Header from "@/app/lib/header.tsx";
+import SlidingCard from "@/app/lib/slidingCard.tsx";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { AnimatePresence, motion } from 'framer-motion';
-import ChildMeasurer from "/app/lib/childMeasurer.tsx";
-import IconButton from "/app/lib/iconButton.tsx";
+import IconButton from "@/app/lib/iconButton.tsx";
 import emailjs from '@emailjs/browser';
 import ExportedImage from "next-image-export-optimizer";
 import logoImageStatic from "/public/images/logoCropped.jpg";
@@ -44,8 +43,8 @@ export default function ContactPage(){
 		setErrors(newErrors);
 		if (Object.keys(newErrors).length == 0 && formRef.current){
 			setFormState(1);
-//			wait()
-			emailjs.sendForm("service_6omc8df","template_2e6g0zv", formRef.current, {publicKey: "lDCeJnFwBEYnQGVHD"})
+			wait()
+//			emailjs.sendForm("service_6omc8df","template_2e6g0zv", formRef.current, {publicKey: "lDCeJnFwBEYnQGVHD"})
 				.then(
 					() => setFormState(2),
 					(error) => {

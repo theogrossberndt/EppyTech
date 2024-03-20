@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, FormEvent } from 'react';
 import styles from "./page.module.css";
 import Header from "@/app/lib/header.tsx";
-import SlidingCard from "@/app/lib/slidingCard.tsx";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'

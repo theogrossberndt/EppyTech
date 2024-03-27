@@ -11,6 +11,7 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import { AnimatePresence, motion } from 'framer-motion';
+import IconButton from '@/app/lib/iconButton.tsx';
 
 import {ContextProvider} from "@/app/appProvider.tsx";
 
@@ -133,6 +134,20 @@ const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
 					/>
 					<button className={styles.button} onClick={() => route("/contact")}>FREE CONSULTATION</button>
 					<div className={styles.navIcons}>
+						<IconButton tooltip="Home" onClick={() => route("/")}>
+							<FontAwesomeIcon icon={faHouse} style={{color: houseColor, width: '2em', height: '2em'}}/>
+						</IconButton>
+						<IconButton tooltip="Contact Us" onClick={() => route("/contact")}>
+							<FontAwesomeIcon icon={faPaperPlane} style={{color: contactColor, width: '2em', height: '2em'}}/>
+						</IconButton>
+					</div>
+				</div>
+			)}
+		</div>
+	);
+}
+
+/*
 						<button className={styles.navIconButton} onClick={()=> route("/")}>
 							<FontAwesomeIcon icon={faHouse} style={{color: houseColor, width: '2em', height: '2em'}}/>
 							<span className={styles.tooltiptext}>Home</span>
@@ -141,11 +156,8 @@ const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
 							<FontAwesomeIcon icon={faPaperPlane} style={{color: contactColor, width: '2em', height: '2em'}}/>
 							<span className={styles.tooltiptext}>Contact Us</span>
 						</button>
-					</div>
-				</div>
-			)}
-		</div>
-	);
-}
+
+
+*/
 
 export default Header;

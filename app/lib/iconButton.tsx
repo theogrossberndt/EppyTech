@@ -20,6 +20,3 @@ const IconButton = ({tooltip, children, onClick}: IconButtonProps) => {
 }
 
 export default IconButton;
-
-//					<span style={{position: 'fixed', marginTop: '0.5rem'}}>
-

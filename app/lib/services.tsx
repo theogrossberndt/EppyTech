@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useContext, useEffect, useMemo, useState, useRef } from 'react';
 import debounce from 'lodash.debounce';
 import styles from "./services.module.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { ContextProvider } from "@/app/appProvider.tsx";
 
 type ServicesProps = {
 	services: Array<string>;
@@ -13,6 +14,8 @@ type ServicesProps = {
 };
 
 const Services = ({services, headerHeight, children}: ServicesProps): React.ReactElement => {
+	const context = useContext(ContextProvider);
+
 	const pheights: Array<number> = children.map(child => 0);
 	const [heights, setHeights] = useState<Array<number>>(pheights);
 

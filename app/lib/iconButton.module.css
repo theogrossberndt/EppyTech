@@ -37,6 +37,7 @@
 	transition: opacity 0.5s;
 	position: relative;
 	left: -50%;
+	white-space: nowrap;
 }
 
 .navIconButton:hover .tooltiptext {

@@ -38,7 +38,7 @@ export default function Home() {
 								alt="Eppy Tech Building"
 								fill
 								priority
-								style={{borderRadius: '5%', objectFit: 'cover'}}
+								style={{borderRadius: '2vw', objectFit: 'cover'}}
 								sizes="(max-width: 1024px) 100vw, 50vw"
 							/>
 						</div>
@@ -58,7 +58,7 @@ export default function Home() {
 										console.log(el.clientHeight);
 										setAboutHeight(el.clientHeight);
 									}
-								}}>
+								}} style={{position: 'relative', zIndex: 2}}>
 									<h1>About Us</h1>
 									<br/>
 									<p>

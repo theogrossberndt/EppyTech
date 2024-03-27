@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import AppProvider from "@/app/appProvider.tsx";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +18,9 @@ export default function RootLayout({children}: RootProps) {
 	return (
 		<html lang="en">
 			<body className={inter.className} suppressHydrationWarning>
-				{children}
+				<AppProvider>
+					{children}
+				</AppProvider>
 			</body>
 		</html>
 	);

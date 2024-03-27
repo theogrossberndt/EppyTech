@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import ExportedImage from "next-image-export-optimizer";
 import frontImageStatic from "/public/images/front.jpg";
 import logoImageStatic from "/public/images/logoCropped.jpg";
@@ -9,41 +9,56 @@ import Header from "@/app/lib/header.tsx";
 import Services from "@/app/lib/services.tsx";
 import { ManagedServices, HelpDesk, DataProtection, CloudComputing, PhoneSystems, BusinessITSupport, RepairServices } from "@/app/lib/tabs.tsx";
 
+import {ContextProvider} from "@/app/appProvider.tsx";
+
 export default function Home() {
 	const [headerHeight, setHeaderHeight] = useState<number>(0);
+	const [aboutHeight, setAboutHeight] = useState<number>(0);
+	const aboutRef = useRef(null);
 
 	const headerRefFunc = (el: HTMLDivElement): void => {
 		if (el != null)
 			setHeaderHeight(el.offsetHeight);
 	}
 
+	const context = useContext(ContextProvider);
+
+	if (!context)
+		return (<div/>);
+
 	return (
 		<div>
 			<Header selectedPage={0} refFunc={headerRefFunc}/>
 			<main>
 				<div className={styles.body}>
-					<div className={styles.about}>
+					<div className={[styles.about, context.singleCol ? styles.aboutMobile : ""].join(" ")}>
+						<div className={styles.aboutPane} style={context.singleCol ? {aspectRatio: "2/1"} : {}}>
 							<ExportedImage
 								src={frontImageStatic}
 								alt="Eppy Tech Building"
-								width={600}
-								height={500}
+								fill
 								priority
-								style={{borderRadius: '5%'}}
+								style={{borderRadius: '5%', objectFit: 'cover'}}
+								sizes="(max-width: 1024px) 100vw, 50vw"
 							/>
-						<div className={styles.aboutPadder}/>
+						</div>
 						<div className={styles.aboutPane}>
 							<div>
 								<div className={styles.overlayDivCenter}>
 									<ExportedImage
 										src={logoImageStatic}
 										alt="Eppy Tech Building"
-										width={400}
-										height={400}
+										width={Math.min(400, aboutHeight-32)}
+										height={Math.min(400, aboutHeight-32)}
 										priority
 									/>
 								</div>
-								<div className={styles.overlayDiv}>
+								<div ref={el => {
+									if (el != null){
+										console.log(el.clientHeight);
+										setAboutHeight(el.clientHeight);
+									}
+								}}>
 									<h1>About Us</h1>
 									<br/>
 									<p>

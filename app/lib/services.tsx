@@ -131,7 +131,7 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 					{isOpen && (
 						<motion.div animate={{height: 'auto', opacity: 1}} initial={{height: 0, opacity: 0}} exit={{height: 0, opacity: 0}} style={{overflow: 'hidden'}} transition={transition}>
 							{services.map((service: string, idx: number) => (
-								<button className={styles.dropDown} key={idx} onClick={() => {
+								<button className={styles.dropDown} key={idx} style={idx == selected ? {backgroundColor: '#7a9ccd'} : {}} onClick={() => {
 									setIsOpen(false);
 									scrollTo(idx);
 								}}>
@@ -150,10 +150,10 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 									if (element != null)
 										setScrollHeight(element.offsetHeight);
 								}}>
-									<button style={{border: 'none', background: 'none', marginLeft: '1rem'}} onClick={idx != 0 ? () => scrollTo(idx-1) : undefined}>
+									<button className={styles.scrollButtonHolder} onClick={idx != 0 ? () => scrollTo(idx-1) : undefined} style={idx == 0 ? {cursor: 'default'} : {}}>
 										<FontAwesomeIcon icon={faCaretUp} style={idx == 0 ? {backgroundColor: '#f0f0f0'} : {}} className={styles.scrollButtons}/>
 									</button>
-									<button style={{border: 'none', background: 'none', marginLeft: '1rem'}} onClick={idx != services.length-1 ? () => scrollTo(idx+1) : undefined}>
+									<button className={styles.scrollButtonHolder} onClick={idx != services.length-1 ? () => scrollTo(idx+1) : undefined} style={idx == services.length-1 ? {cursor: 'default'} : {}}>
 										<FontAwesomeIcon icon={faCaretDown} style={idx == services.length-1 ? {backgroundColor: '#f0f0f0'} : {}} className={styles.scrollButtons}/>
 									</button>
 								</div>
@@ -165,8 +165,6 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 			</div>
 		);
 	}
-//							<div style={{float: 'right', height: heights[idx], display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
-
 
 	const cardRef = useRef<HTMLDivElement>(null);
 

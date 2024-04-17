@@ -9,6 +9,13 @@ type AppProviderProps = {
 export const ContextProvider = createContext(null);
 
 const AppProvider = ({children}: AppProviderProps): React.ReactNode => {
+	if (typeof window == "undefined"){
+		return (
+			<div>
+			</div>
+		);
+	}
+
 	const [value, setValue] = useState<>(null);
 
 	const handleResize = () => {

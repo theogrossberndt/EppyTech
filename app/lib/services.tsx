@@ -9,6 +9,9 @@ import { faCaretUp } from '@fortawesome/free-solid-svg-icons';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { ContextProvider } from "@/app/appProvider.tsx";
 import { AnimatePresence, motion } from 'framer-motion';
+import AnimatedIcon from '@/app/lib/animatedIcon.tsx';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { getServiceSlug, slugToIdx } from '@/app/lib/tabs.tsx';
 
 type ServicesProps = {
 	services: Array<string>;
@@ -21,22 +24,26 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 	if (!context)
 		return (<div/>);
 
-	const [selected, setSelected] = useState<number>(0);
+	const router = useRouter();
+	const searchParams = useSearchParams();
+	const serviceSlug = searchParams.get('service') ?? getServiceSlug(0);
+	console.log(serviceSlug);
+
+	const [selected, setSelected] = useState<number>(slugToIdx(serviceSlug));
 	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [isOpenMobile, setIsOpenMobile] = useState<boolean>(false);
+	const [scrollHeight, setScrollHeight] = useState<number>(0);
 
 	const scrollParentRef = useRef<HTMLDivElement>(null)
+	const headerTextRef = useRef<HTMLDivElement>(null);
+	const cardRef = useRef<HTMLDivElement>(null);
 
 	const pheights: Array<number> = children.map(child => 0);
 	const [heights, setHeights] = useState<Array<number>>(pheights);
-	const [paddings, setPaddings] = useState<Array<number>>(pheights);
+	const [remSize, setRemSize] = useState<number>(parseInt(getComputedStyle(document.documentElement).fontSize));
 
 	const onElementChanged = (element: HTMLDivElement | null, idx: number): void => {
 		if (element != null && element.offsetHeight != heights[idx]){
-			const cs = getComputedStyle(element);
-			var paddingY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-			var borderY = parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth);
-
-			setPaddings(paddings => paddings.map((el: number, elI: number): number => (elI == idx ? paddingY+borderY : el)));
 			setHeights(heights => heights.map((el: number, elI: number): number => (elI == idx ? element.offsetHeight : el)));
 			console.log("el height", idx, element.offsetHeight);
 		}
@@ -48,16 +55,25 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 			if (height > newMaxHeight)
 				newMaxHeight = height;
 		});
-		if (!context.isMobile && newMaxHeight > 0)
+		if (!context.singleCol && newMaxHeight > 0)
 			setIsOpen(true);
-		if ((context.isMobile || isOpen) && scrollParentRef.current != null)
+		if ((context.singleCol || isOpen) && scrollParentRef.current != null)
 			scrollParentRef.current.scroll({top: selected*newMaxHeight, behavior: "instant"});
 		return newMaxHeight;
 	};
 
 	const maxHeight: number = useMemo(calculateMaxHeight, [heights, setIsOpen, scrollParentRef]);
 
-	const debouncedCallback = useMemo(() => debounce(() => setHeights(pheights), 300, {leading: true, trailing: false}), [setHeights])
+	const debouncedCallback = useMemo(() => debounce(() => {
+		if (context.singleCol){
+			const newRemSize: number = parseInt(getComputedStyle(document.documentElement).fontSize);
+			if (remSize != newRemSize){
+				console.log("setting rem to", newRemSize);
+				setRemSize(newRemSize);
+			}
+		}
+		setHeights(pheights);
+	}, 300, {leading: true, trailing: false}), [setHeights])
 
 	useEffect(() => {
 		window.addEventListener('resize', debouncedCallback);
@@ -67,72 +83,45 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 		};
 	}, []);
 
+	const scrollTo = (idx: number) => {
+		setSelected(idx);
+		router.push('/?service=' + getServiceSlug(idx), {scroll: false});
+	}
 
-	if (context.isMobile){
-		const headerTextRef = useRef<HTMLDivElement>(null);
-		const [headerTextHeight, setHeaderTextHeight] = useState<number>(0);
+	useEffect(() => {
+		if (!scrollParentRef.current)
+			return;
+		if (context.singleCol && !headerTextRef.current)
+			return;
+		if (context.singleCol)
+			headerTextRef.current.scroll({top: selected * 2 * remSize, behavior: 'smooth'});
+		scrollParentRef.current.scroll({top: selected*maxHeight, behavior: 'smooth'});
+	}, [selected, headerTextRef.current, scrollParentRef.current]);
 
-		const [scrollHeight, setScrollHeight] = useState<number>(0);
+	if (context.singleCol){
 		const canShow: boolean = maxHeight > 0;
-
 		const transition={duration: 0.5, ease: [0.65, 0, 0.35, 1]};
-		const animate = {
-			opacity: 1,
-			rotate: '0deg',
-			transition: transition
-		}
 
-		const inOut1 = {
-			opacity: 0,
-			rotate: '180deg',
-			transition: transition
-		}
-
-		const inOut2 = {
-			opacity: 0,
-			rotate: '-180deg',
-			transition: transition
-		}
-
-		const scrollTo = (idx: number) => {
-			if (!scrollParentRef.current || !headerTextRef.current)
-				return;
-			setSelected(idx);
-			headerTextRef.current.scroll({top: idx*headerTextHeight, behavior: 'smooth'});
-			scrollParentRef.current.scroll({top: idx*maxHeight, behavior: 'smooth'});
-		}
 
 		return (
 			<div className={styles.servicesCard}>
-				<button className={styles.dropDown} onClick={() => setIsOpen(isOpen => !isOpen)}>
-					<div style={{overflow: 'hidden', height: headerTextHeight, textAlign: 'left'}} ref={headerTextRef}>
+				<button className={styles.dropDown} onClick={() => setIsOpenMobile(isOpen => !isOpen)} style={{cursor: 'pointer'}}>
+					<div style={{overflow: 'hidden', height: '2rem', textAlign: 'left'}} ref={headerTextRef}>
 						{services.map((service, idx) => (
-							<h1 style={{color: "#fff", paddingVertical: '0.5rem'}} ref={el => {
-								if (el != null)
-									setHeaderTextHeight(el.offsetHeight);
-							}}>{service.toUpperCase()}</h1>
+							<h1 style={{color: "#fff", paddingBlock: '0.5rem', lineHeight: '1rem'}} key={idx}>{service.toUpperCase()}</h1>
 						))}
 					</div>
-					<div style={{width: '2em', height: '2em', position: 'relative'}}>
-						<AnimatePresence initial={false}>
-							{isOpen ? (
-								<motion.div animate={animate} initial={inOut1} exit={inOut1} key={0} style={{position: 'absolute'}}>
-									<FontAwesomeIcon icon={faCaretDown} style={{width: '2em', height: '2em', backgroundColor: '#4977bb', color: "#fff"}}/>
-								</motion.div>
-							) : (
-								<motion.div animate={animate} initial={inOut2} exit={inOut2} key={1} style={{position: 'absolute'}}>
-									<FontAwesomeIcon icon={faBars} style={{width: '2em', height: '2em', backgroundColor: '#4977bb', color: "#fff"}}/>
-								</motion.div>
-							)}
-						</AnimatePresence>
-					</div>
+					<AnimatedIcon selected={isOpenMobile ? 1 : 0} style={{width: '2rem', height: '2rem'}}>
+						<FontAwesomeIcon icon={faBars} style={{width: '2rem', height: '2rem', backgroundColor: '#4977bb', color: "#fff"}}/>
+						<FontAwesomeIcon icon={faCaretDown} style={{width: '2rem', height: '2rem', backgroundColor: '#4977bb', color: "#fff"}}/>
+					</AnimatedIcon>
 				</button>
 				<AnimatePresence>
-					{isOpen && (
+					{isOpenMobile && (
 						<motion.div animate={{height: 'auto', opacity: 1}} initial={{height: 0, opacity: 0}} exit={{height: 0, opacity: 0}} style={{overflow: 'hidden'}} transition={transition}>
 							{services.map((service: string, idx: number) => (
 								<button className={styles.dropDown} key={idx} style={idx == selected ? {backgroundColor: '#7a9ccd'} : {}} onClick={() => {
-									setIsOpen(false);
+									setIsOpenMobile(false);
 									scrollTo(idx);
 								}}>
 									{service}
@@ -143,19 +132,17 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 				</AnimatePresence>
 				<div className={[styles.infoParent, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: heights[selected]} : {maxHeight: 0}} ref={scrollParentRef}>
 					{children.map((child: React.ReactNode, idx: number) => (
-						<div style={{height: maxHeight}} key={idx}>
-							<div className={styles.servicesInfo} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)} key={idx}>
-								<div style={{float: 'right', width: 0, height: heights[idx]-paddings[idx]-scrollHeight}}></div>
-								<div style={{float: 'right', clear: 'right', display: 'flex', flexDirection: 'column', gap: 20}} ref={element => {
-									if (element != null)
-										setScrollHeight(element.offsetHeight);
-								}}>
-									<button className={styles.scrollButtonHolder} onClick={idx != 0 ? () => scrollTo(idx-1) : undefined} style={idx == 0 ? {cursor: 'default'} : {}}>
-										<FontAwesomeIcon icon={faCaretUp} style={idx == 0 ? {backgroundColor: '#f0f0f0'} : {}} className={styles.scrollButtons}/>
-									</button>
-									<button className={styles.scrollButtonHolder} onClick={idx != services.length-1 ? () => scrollTo(idx+1) : undefined} style={idx == services.length-1 ? {cursor: 'default'} : {}}>
-										<FontAwesomeIcon icon={faCaretDown} style={idx == services.length-1 ? {backgroundColor: '#f0f0f0'} : {}} className={styles.scrollButtons}/>
-									</button>
+						<div style={{height: maxHeight}}>
+							<div className={styles.servicesInfo} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)} key={idx} style={{position: 'relative'}}>
+								<div style={{position: 'absolute', bottom: '1rem', right: '1rem'}}>
+									<div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem', opacity: 0.5}}>
+										<button className={styles.scrollButtonHolder} onClick={idx != 0 ? () => scrollTo(idx-1) : undefined}>
+											<FontAwesomeIcon icon={faCaretUp} style={idx == 0 ? {backgroundColor: '#f0f0f0', cursor: 'default'} : {}} className={styles.scrollButtons}/>
+										</button>
+										<button className={styles.scrollButtonHolder} onClick={idx != services.length-1 ? () => scrollTo(idx+1) : undefined}>
+											<FontAwesomeIcon icon={faCaretDown} style={idx == services.length-1 ? {backgroundColor: '#f0f0f0', cursor: 'default'}: {}} className={styles.scrollButtons}/>
+										</button>
+									</div>
 								</div>
 								{child}
 							</div>
@@ -165,8 +152,6 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 			</div>
 		);
 	}
-
-	const cardRef = useRef<HTMLDivElement>(null);
 
 	const canShow: boolean = maxHeight > 0 && isOpen;
 
@@ -183,9 +168,8 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 
 	return (
 		<div className={styles.servicesCard} ref={cardRef}>
-			<div className={[styles.dropDown, styles.animatedMaxHeight].join(" ")} onClick={maxHeight < 0 ? undefined : () => setIsOpen(toggleOpen)}>
+			<div className={[styles.dropDown, styles.animatedMaxHeight].join(" ")}>
 				<h1 style={{color: "#fff"}}>Our Services</h1>
-				<FontAwesomeIcon icon={faCaretDown} className={[styles.caretIcon, canShow ? styles.flipped : ""].join(" ")}/>
 			</div>
 			<div className={styles.servicesBody}>
 				<div className={[styles.servicesSelect, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight} : {maxHeight: 0}}>
@@ -194,11 +178,7 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 							<div
 								className={styles.serviceOption}
 								style={selected == idx ? {backgroundColor: '#4977bb', color: '#fff'} : {}}
-								onClick={() => {
-									setSelected(idx);
-									if (scrollParentRef.current != null)
-										scrollParentRef.current.scroll({top: idx*maxHeight, behavior: "smooth"});
-								}}
+								onClick={() => scrollTo(idx)}
 							>{service.toUpperCase()}</div>
 							<div className={styles.flag} style={selected == idx ? {backgroundColor: '#7AB4EA'} : {}}></div>
 						</div>
@@ -206,8 +186,20 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 				</div>
 				<div className={[styles.infoParent, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight} : {maxHeight: 0}} ref={scrollParentRef}>
 					{children.map((child: React.ReactNode, idx: number) => (
-						<div className={styles.servicesInfo} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)} style={{minHeight: maxHeight}} key={idx}>
-							{child}
+						<div style={{height: maxHeight, position: 'relative'}}>
+							<div className={styles.servicesInfo} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)} key={idx}>
+								<div style={{position: 'absolute', bottom: '1rem', right: '1rem'}}>
+									<div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem', opacity: maxHeight - heights[idx] < (8.5*remSize) ? 0.5 : 1.0}}>
+										<button className={styles.scrollButtonHolder} onClick={idx != 0 ? () => scrollTo(idx-1) : undefined}>
+											<FontAwesomeIcon icon={faCaretUp} style={idx == 0 ? {backgroundColor: '#f0f0f0', cursor: 'default'} : {}} className={styles.scrollButtons}/>
+										</button>
+										<button className={styles.scrollButtonHolder} onClick={idx != services.length-1 ? () => scrollTo(idx+1) : undefined}>
+											<FontAwesomeIcon icon={faCaretDown} style={idx == services.length-1 ? {backgroundColor: '#f0f0f0', cursor: 'default'}: {}} className={styles.scrollButtons}/>
+										</button>
+									</div>
+								</div>
+								{child}
+							</div>
 						</div>
 					))}
 				</div>

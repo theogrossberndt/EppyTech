@@ -1,16 +1,18 @@
 "use client"
 
-import { useEffect, useRef, useState, FormEvent, ReactElement } from 'react';
+import { useContext, useEffect, useRef, useState, FormEvent, ReactElement } from 'react';
 import styles from "./page.module.css";
 import Header from "@/app/lib/header.tsx";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { AnimatePresence, motion } from 'framer-motion';
-import IconButton from "@/app/lib/iconButton.tsx";
+import RoundedButton from "@/app/lib/roundedButton.tsx";
 import emailjs from '@emailjs/browser';
 import ExportedImage from "next-image-export-optimizer";
 import logoImageStatic from "/public/images/logoCropped.jpg";
+
+import {ContextProvider} from "@/app/appProvider.tsx";
 
 export default function ContactPage(){
 	const formRef = useRef<HTMLFormElement>(null);
@@ -21,6 +23,7 @@ export default function ContactPage(){
 	const [maxDimensions, setMaxDimensions] = useState({width: 0, height: 0});
 	const nameToReadable: {[key: string]: string} = {fname: "first name", lname: "last name", email: "email", phone: "phone number", message: "message"};
 
+	const context = useContext(ContextProvider);
 
 	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -109,11 +112,14 @@ export default function ContactPage(){
 		return () => resizeObserver.disconnect();
 	}, [formRef.current])
 
+	if (!context)
+		return (<div/>);
+
 	return (
 		<div>
 			<Header selectedPage={1} refFunc={(el) => {}}/>
-			<main className={styles.main} id="main">
-				<div style={{maxWidth: '50%'}}>
+			<main className={styles.main} style={context.singleCol ? {flexDirection: 'column'} : {}}id="main">
+				<div style={context.singleCol ? {} : {maxWidth: '50%'}}>
 					<h1>Get A Free Consultation</h1>
 					<br/>
 					<p>Fill out the form to receive a free consultation and learn how we can help make your technology worry-free!</p>
@@ -169,9 +175,9 @@ export default function ContactPage(){
 									if (formRef.current)
 										formRef.current.reset();
 								}}>
-									<IconButton onClick={() => setFormState(0)}>
+									<RoundedButton onClick={() => setFormState(0)}>
 										<FontAwesomeIcon icon={faChevronLeft} style={{width: '1rem', height: '1rem'}}/>
-									</IconButton>
+									</RoundedButton>
 									<div>
 										<div className={styles.overlayDiv} style={{filter: 'blur(16px)', opacity: 0.5}}>
 											<ExportedImage

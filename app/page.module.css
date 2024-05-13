@@ -44,3 +44,17 @@
 	padding-inline-start: 2vw;
 }
 
+.consultationButton {
+	position: absolute;
+	background-color: #4977BB;
+	color: #fff;
+	font-size: 1.25rem;
+	padding: 1vh 1vw;
+	border-radius: 100vmax;
+	border: none;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.20);
+	cursor: pointer;
+	top: 1rem;
+	right: 1rem;
+}
+

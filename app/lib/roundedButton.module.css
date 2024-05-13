@@ -1,0 +1,24 @@
+.roundedButton {
+	border-radius: 100vmax;
+	padding: 1rem;
+	background: #fff;
+	transition: background 0.5s;
+	border: none;
+	font-size: 1rem;
+	font-weight: bold;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5rem;
+	text-wrap: nowrap;
+}
+
+.roundedButton:hover {
+	background: #f0f0f0;
+}
+
+.roundedButton:active {
+	background: #e0e0e0;
+}

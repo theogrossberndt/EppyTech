@@ -14,14 +14,15 @@
 	width: 100%;
 	background: #4977BB;
 	color: #fff;
-	padding: 1vh;
+	padding: 1rem;
 	font-size: 1rem;
 	margin: 0;
 	text-align: center;
 }
 
+/* Mobile only - the drop downs for the different pages in the menu*/
 .pageLabel {
-	padding: 2vh 2vw;
+	padding: 1rem;
 	cursor: pointer;
 	font-size: 1.5rem;
 	font-weight: bold;
@@ -29,7 +30,7 @@
 	flex-direction: row;
 	justify-content: flex-start;
 	align-items: center;
-	gap: 2vw;
+	gap: 1rem;
 }
 
 .pageLabel:hover {
@@ -40,82 +41,53 @@
 	background: #e0e0e0;
 }
 
+/* The content-holding div for the navigation bar and logo */
 .nav {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	width: 100%;
-	padding: 2vh 2vw;
+	padding: 1rem;
 }
 
-.navIcons {
-	display: flex;
-}
-
-.navIconButton {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 50%;
-	margin-left: 1vw;
-	padding: 2vh;
+.roundedButton {
+	border-radius: 100vmax;
+	margin-left: 1rem;
+	padding: 1rem;
 	background: #fff;
-	-webkit-transition: background 0.5s;
 	transition: background 0.5s;
 	border: none;
-	font-size: 1em;
+	font-size: 1rem;
 	font-weight: bold;
 	cursor: pointer;
-	position: relative;
 }
 
-.navIconButton:hover {
+.roundedButton:hover {
 	background: #f0f0f0;
-	-webkit-transition: background 0.5s;
-	transition: background 0.5s;
 }
 
-.navIconButton:active {
+.roundedButton:active {
 	background: #e0e0e0;
 }
 
-.tooltiptext {
-	opacity: 0;
-	background-color: #4977BB;
-	color: #fff;
-	text-align: center;
-	padding: 0.5vh 1vw;
-	border-radius: 6px;
- 
-	position: absolute;
-	z-index: 1;
-	bottom: -1vh;
-	-webkit-transition: opacity 0.5s;
-	transition: opacity 0.5s;
-}
-
-.navIconButton:hover .tooltiptext {
-	opacity: 1;
-	-webkit-transition: opacity 0.5s;
-	transition: opacity 0.5s;
-}
-
-.button {
+.consultationButton {
 	background-color: #4977BB;
 	color: #fff;
 	font-size: 1.25rem;
-	padding: 1vh 1vw;
+	padding: 1rem;
 	border-radius: 100vmax;
 	border: none;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.20);
 	cursor: pointer;
+	margin-left: 1rem;
+	margin-right: 1rem;
 }
 
-.button:hover {
+.consultationButton:hover {
 	background-color: #5b85c2;
 }
 
-.button:active {
+.consultationButton:active {
 	background-color: #35598e;
 }
 
@@ -129,4 +101,18 @@
 .hr {
 	height: 1px;
 	background-color: #a4bbdd;
+}
+
+.iconButton {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5rem;
+	height: 5rem;
+	text-wrap: nowrap;
+}
+
+.iconButton > * {
+	flex-grow: 1;
 }

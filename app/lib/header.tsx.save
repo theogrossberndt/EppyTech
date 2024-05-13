@@ -12,7 +12,6 @@ import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import { AnimatePresence, motion } from 'framer-motion';
 import RoundedButton from '@/app/lib/roundedButton.tsx';
-import AnimatedRoundedButton from '@/app/lib/animatedRoundedButton.tsx';
 
 import {ContextProvider} from "@/app/appProvider.tsx";
 
@@ -70,24 +69,6 @@ const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
 	if (!context)
 		return (<div/>)
 
-/*
-						<button className={styles.roundedButton} onClick={()=> setExpanded(oldExpanded => ({open: !oldExpanded.open, inProgress: true}))}>
-							<div style={{width: '2em', height: '2em', position: 'relative'}}>
-								<AnimatePresence initial={false}>
-									{expanded.open ? (
-										<motion.div animate={animate} initial={inOut1} exit={inOut1} key={0} style={{position: 'absolute'}}>
-											<FontAwesomeIcon icon={faCaretDown} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
-										</motion.div>
-									) : (
-										<motion.div animate={animate} initial={inOut2} exit={inOut2} key={1} style={{position: 'absolute'}}>
-											<FontAwesomeIcon icon={faBars} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
-										</motion.div>
-									)}
-								</AnimatePresence>
-							</div>
-						</button>
-*/
-
 	return (
 		<div className={styles.header} ref={refFunc}>
 			<div className={styles.banner}>
@@ -106,10 +87,21 @@ const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
 								style={{cursor: "pointer", objectFit: 'contain'}}
 							/>
 						</div>
-						<AnimatedRoundedButton onClick={() => setExpanded(oldExpanded => ({open: !oldExpanded.open, inProgress: true}))} style={{width: '2rem', height: '2rem'}}>
-							<FontAwesomeIcon icon={faBars} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
-							<FontAwesomeIcon icon={faCaretDown} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
-						</AnimatedRoundedButton>
+						<button className={styles.roundedButton} onClick={()=> setExpanded(oldExpanded => ({open: !oldExpanded.open, inProgress: true}))}>
+							<div style={{width: '2em', height: '2em', position: 'relative'}}>
+								<AnimatePresence initial={false}>
+									{expanded.open ? (
+										<motion.div animate={animate} initial={inOut1} exit={inOut1} key={0} style={{position: 'absolute'}}>
+											<FontAwesomeIcon icon={faCaretDown} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
+										</motion.div>
+									) : (
+										<motion.div animate={animate} initial={inOut2} exit={inOut2} key={1} style={{position: 'absolute'}}>
+											<FontAwesomeIcon icon={faBars} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
+										</motion.div>
+									)}
+								</AnimatePresence>
+							</div>
+						</button>
 					</div>
 					<AnimatePresence>
 						{expanded.open && (

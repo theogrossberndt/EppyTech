@@ -1,3 +1,58 @@
+const services = {
+	'managed-services': {
+		title: 'Managed Services - Eppy Tech Connecticut',
+		description: 'With Eppy Tech CT Managed Services get full support met for your local Connecticut business',
+		keyWords: ['managed', 'services', 'connecticut', 'ct']
+	},
+	'help-desk': {
+			title: 'Help Desk - Eppy Tech Connecticut',
+			description: 'With Eppy Tech help desk support get assistance on a variety of IT needs',
+			keyWords: ['help', 'desk', 'connecticut', 'ct']
+	},
+	'data-protection': {
+		title: 'Data Protection - Eppy Tech Connecticut',
+		description: "With Eppy Tech protect your company's critical data from disaster",
+		keyWords: ['data', 'protection', 'connecticut', 'ct']
+	},
+	'cloud-computing': {
+		title: 'Cloud Computing - Eppy Tech Connecticut',
+		description: 'With Eppy Tech get your cloud services needs met with all the benefits of hosting a server',
+		keyWords: ['cloud', 'computing', 'hosting', 'server', 'connecticut', 'ct']
+	},
+	'phone-systems': {
+		title: 'VoIP Phone Systems - Eppy Tech Connecticut',
+		description: 'With Eppy Tech VoIP phone systems make communication easier',
+		keyWords: ['voip', 'phone', 'connecticut', 'ct']
+	},
+	'business-it-support': {
+		title: 'Business IT Support - Eppy Tech Connecticut',
+		description: 'With Eppy Tech get hourly business IT support for all your computer needs',
+		keyWords: ['business', 'support', 'connecticut', 'ct']
+	},
+	'repair-services': {
+		title: 'Repair Services - Eppy Tech Connecticut',
+		description: 'Let us repair your laptop, desktop, or printer in our complete break-fix shop',
+		keyWords: ['repair', 'laptop', 'desktop', 'printer', 'computer', 'connecticut', 'ct']
+	},
+	inOrder: ['managed-services', 'help-desk', 'data-protection', 'cloud-computing', 'phone-systems', 'business-it-support', 'repair-services']
+}
+
+export function getMetadata(serviceCode) {
+	return services[serviceCode];
+}
+
+export function isServiceSlug(slug){
+	return slug in services;
+}
+
+export function getServiceSlug(idx){
+	return services.inOrder[idx];
+}
+
+export function slugToIdx(slug){
+	return services.inOrder.indexOf(slug);
+}
+
 export function ManagedServices(): React.ReactElement {
 	return (
 		<div>

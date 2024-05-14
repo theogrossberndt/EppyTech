@@ -1,6 +1,7 @@
 'use client';
 
 import { Fragment, useContext, useEffect, useMemo, useState, useRef } from 'react';
+import Link from 'next/link';
 import debounce from 'lodash.debounce';
 import styles from "./services.module.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,6 +11,7 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { ContextProvider } from "@/app/appProvider.tsx";
 import { AnimatePresence, motion } from 'framer-motion';
 import AnimatedIcon from '@/app/lib/animatedIcon.tsx';
+import ConditionallyClickableLink from '@/app/lib/conditionallyClickableLink.tsx';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getServiceSlug, slugToIdx } from '@/app/lib/tabs.tsx';
 
@@ -30,9 +32,7 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 	console.log(serviceSlug);
 
 	const [selected, setSelected] = useState<number>(slugToIdx(serviceSlug));
-	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [isOpenMobile, setIsOpenMobile] = useState<boolean>(false);
-	const [scrollHeight, setScrollHeight] = useState<number>(0);
 
 	const scrollParentRef = useRef<HTMLDivElement>(null)
 	const headerTextRef = useRef<HTMLDivElement>(null);
@@ -55,14 +55,12 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 			if (height > newMaxHeight)
 				newMaxHeight = height;
 		});
-		if (!context.singleCol && newMaxHeight > 0)
-			setIsOpen(true);
-		if ((context.singleCol || isOpen) && scrollParentRef.current != null)
+		if (scrollParentRef.current != null)
 			scrollParentRef.current.scroll({top: selected*newMaxHeight, behavior: "instant"});
 		return newMaxHeight;
 	};
 
-	const maxHeight: number = useMemo(calculateMaxHeight, [heights, setIsOpen, scrollParentRef]);
+	const maxHeight: number = useMemo(calculateMaxHeight, [heights, scrollParentRef]);
 
 	const debouncedCallback = useMemo(() => debounce(() => {
 		if (context.singleCol){
@@ -83,11 +81,6 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 		};
 	}, []);
 
-	const scrollTo = (idx: number) => {
-		setSelected(idx);
-		router.push('/?service=' + getServiceSlug(idx), {scroll: false});
-	}
-
 	useEffect(() => {
 		if (!scrollParentRef.current)
 			return;
@@ -98,10 +91,10 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 		scrollParentRef.current.scroll({top: selected*maxHeight, behavior: 'smooth'});
 	}, [selected, headerTextRef.current, scrollParentRef.current]);
 
-	if (context.singleCol){
-		const canShow: boolean = maxHeight > 0;
-		const transition={duration: 0.5, ease: [0.65, 0, 0.35, 1]};
+	const canShow: boolean = maxHeight > 0;
 
+	if (context.singleCol){
+		const transition={duration: 0.5, ease: [0.65, 0, 0.35, 1]};
 
 		return (
 			<div className={styles.servicesCard}>
@@ -120,12 +113,14 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 					{isOpenMobile && (
 						<motion.div animate={{height: 'auto', opacity: 1}} initial={{height: 0, opacity: 0}} exit={{height: 0, opacity: 0}} style={{overflow: 'hidden'}} transition={transition}>
 							{services.map((service: string, idx: number) => (
-								<button className={styles.dropDown} key={idx} style={idx == selected ? {backgroundColor: '#7a9ccd'} : {}} onClick={() => {
-									setIsOpenMobile(false);
-									scrollTo(idx);
-								}}>
-									{service}
-								</button>
+								<Link className={[styles.dropDown, styles.darken].join(" ")} key={idx} style={idx == selected ? {backgroundColor: '#4977bb'}: {color: '#000'}}
+									href={"/?service=" + getServiceSlug(idx)} scroll={false} replace shallow
+									onClick={() => {
+										setIsOpenMobile(false);
+										setSelected(idx);
+									}}>
+										{service}
+								</Link>
 							))}
 						</motion.div>
 					)}
@@ -136,12 +131,14 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 							<div className={styles.servicesInfo} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)} key={idx} style={{position: 'relative'}}>
 								<div style={{position: 'absolute', bottom: '1rem', right: '1rem'}}>
 									<div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem', opacity: 0.5}}>
-										<button className={styles.scrollButtonHolder} onClick={idx != 0 ? () => scrollTo(idx-1) : undefined}>
+										<ConditionallyClickableLink className={styles.scrollButtonHolder} onClick={idx != 0 ? () => setSelected(idx-1) : undefined}
+											href={idx != 0 ? "/?service=" + getServiceSlug(idx-1) : null} scroll={false} replace shallow>
 											<FontAwesomeIcon icon={faCaretUp} style={idx == 0 ? {backgroundColor: '#f0f0f0', cursor: 'default'} : {}} className={styles.scrollButtons}/>
-										</button>
-										<button className={styles.scrollButtonHolder} onClick={idx != services.length-1 ? () => scrollTo(idx+1) : undefined}>
+										</ConditionallyClickableLink>
+										<ConditionallyClickableLink className={styles.scrollButtonHolder} onClick={idx != services.length-1 ? () => setSelected(idx+1) : undefined}
+											href={idx != services.length-1 ? "/?service=" + getServiceSlug(idx+1) : null} scroll={false} replace shallow>
 											<FontAwesomeIcon icon={faCaretDown} style={idx == services.length-1 ? {backgroundColor: '#f0f0f0', cursor: 'default'}: {}} className={styles.scrollButtons}/>
-										</button>
+										</ConditionallyClickableLink>
 									</div>
 								</div>
 								{child}
@@ -153,7 +150,6 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 		);
 	}
 
-	const canShow: boolean = maxHeight > 0 && isOpen;
 
 	const toggleOpen = (prevOpen: boolean): boolean => {
 		if (!prevOpen){
@@ -175,11 +171,14 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 				<div className={[styles.servicesSelect, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight} : {maxHeight: 0}}>
 					{services.map((service: string, idx: number) => (
 						<div className={styles.serviceOptionWrapper} key={idx}>
-							<div
+							<Link
 								className={styles.serviceOption}
-								style={selected == idx ? {backgroundColor: '#4977bb', color: '#fff'} : {}}
-								onClick={() => scrollTo(idx)}
-							>{service.toUpperCase()}</div>
+								style={selected == idx ? {backgroundColor: '#4977bb', textDecoration: 'none'} : {textDecoration: 'none'}}
+								onClick={() => setSelected(idx)}
+								href={"/?service=" + getServiceSlug(idx)} shallow replace scroll={false}
+							>
+								<h1 style={{color: selected == idx ? '#fff' : '#000', fontSize: '1.5rem'}}>{service.toUpperCase()}</h1>
+							</Link>
 							<div className={styles.flag} style={selected == idx ? {backgroundColor: '#7AB4EA'} : {}}></div>
 						</div>
 					))}
@@ -190,12 +189,14 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 							<div className={styles.servicesInfo} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)} key={idx}>
 								<div style={{position: 'absolute', bottom: '1rem', right: '1rem'}}>
 									<div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem', opacity: maxHeight - heights[idx] < (8.5*remSize) ? 0.5 : 1.0}}>
-										<button className={styles.scrollButtonHolder} onClick={idx != 0 ? () => scrollTo(idx-1) : undefined}>
+										<ConditionallyClickableLink className={styles.scrollButtonHolder} onClick={idx != 0 ? () => setSelected(idx-1) : undefined}
+											href={idx != 0 ? "/?service=" + getServiceSlug(idx-1) : null} shallow replace scroll={false}>
 											<FontAwesomeIcon icon={faCaretUp} style={idx == 0 ? {backgroundColor: '#f0f0f0', cursor: 'default'} : {}} className={styles.scrollButtons}/>
-										</button>
-										<button className={styles.scrollButtonHolder} onClick={idx != services.length-1 ? () => scrollTo(idx+1) : undefined}>
+										</ConditionallyClickableLink>
+										<ConditionallyClickableLink className={styles.scrollButtonHolder} onClick={idx != services.length-1 ? () => setSelected(idx+1) : undefined}
+											href={idx != services.length-1 ? "/?services=" + getServiceSlug(idx+1) : null}>
 											<FontAwesomeIcon icon={faCaretDown} style={idx == services.length-1 ? {backgroundColor: '#f0f0f0', cursor: 'default'}: {}} className={styles.scrollButtons}/>
-										</button>
+										</ConditionallyClickableLink>
 									</div>
 								</div>
 								{child}

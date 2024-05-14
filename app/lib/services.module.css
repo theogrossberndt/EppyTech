@@ -11,6 +11,15 @@
 	z-index: 1;
 	border: none;
 	font-weight: bold;
+	text-decoration: none;
+}
+
+.darken {
+	background-color: #a4bbdd;
+}
+
+.darken:hover {
+	background-color: #7a9ccd;
 }
 
 .servicesCard {
@@ -71,10 +80,8 @@
 	width: 100%;
 	background-color: #a4bbdd;
 	color: #000;
-	font-size: 1.5rem;
 	padding: 1rem;
 	cursor: pointer;
-	white-space: nowrap;
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;

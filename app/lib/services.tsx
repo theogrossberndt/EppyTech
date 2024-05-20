@@ -29,49 +29,55 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const serviceSlug = searchParams.get('service') ?? getServiceSlug(0);
-	console.log(serviceSlug);
+	console.log("Service slug: ", serviceSlug);
 
 	const [selected, setSelected] = useState<number>(slugToIdx(serviceSlug));
-	const [isOpenMobile, setIsOpenMobile] = useState<boolean>(false);
+	const [direction, setDirection] = useState<number>(0);
+	const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
-	const scrollParentRef = useRef<HTMLDivElement>(null)
 	const headerTextRef = useRef<HTMLDivElement>(null);
-	const cardRef = useRef<HTMLDivElement>(null);
 
 	const pheights: Array<number> = children.map(child => 0);
 	const [heights, setHeights] = useState<Array<number>>(pheights);
+	const [width, setWidth] = useState<number>(0);
 	const [remSize, setRemSize] = useState<number>(parseInt(getComputedStyle(document.documentElement).fontSize));
+	const [calculateSize, setCalculateSize] = useState<boolean>(true);
 
 	const onElementChanged = (element: HTMLDivElement | null, idx: number): void => {
 		if (element != null && element.offsetHeight != heights[idx]){
 			setHeights(heights => heights.map((el: number, elI: number): number => (elI == idx ? element.offsetHeight : el)));
+			if (element.offsetWidth != width)
+				setWidth(element.offsetWidth);
+			console.log("el width", element.offsetWidth);
 			console.log("el height", idx, element.offsetHeight);
 		}
 	}
 
 	const calculateMaxHeight = (): number => {
 		let newMaxHeight: number = 0;
+		let hasZero: boolean = false;
 		heights.forEach((height: number): void => {
 			if (height > newMaxHeight)
 				newMaxHeight = height;
+			if (height <= 0)
+				hasZero = true;
 		});
-		if (scrollParentRef.current != null)
-			scrollParentRef.current.scroll({top: selected*newMaxHeight, behavior: "instant"});
+		if (!hasZero)
+			setCalculateSize(false);
 		return newMaxHeight;
 	};
 
-	const maxHeight: number = useMemo(calculateMaxHeight, [heights, scrollParentRef]);
+	const maxHeight: number = useMemo(calculateMaxHeight, [heights, setCalculateSize]);
 
 	const debouncedCallback = useMemo(() => debounce(() => {
-		if (context.singleCol){
-			const newRemSize: number = parseInt(getComputedStyle(document.documentElement).fontSize);
-			if (remSize != newRemSize){
-				console.log("setting rem to", newRemSize);
-				setRemSize(newRemSize);
-			}
+		const newRemSize: number = parseInt(getComputedStyle(document.documentElement).fontSize);
+		if (remSize != newRemSize){
+			console.log("setting rem to", newRemSize);
+			setRemSize(newRemSize);
 		}
 		setHeights(pheights);
-	}, 300, {leading: true, trailing: false}), [setHeights])
+		setCalculateSize(true);
+	}, 300, {leading: true, trailing: false}), [setHeights, setCalculateSize])
 
 	useEffect(() => {
 		window.addEventListener('resize', debouncedCallback);
@@ -81,43 +87,59 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 		};
 	}, []);
 
-	useEffect(() => {
-		if (!scrollParentRef.current)
-			return;
-		if (context.singleCol && !headerTextRef.current)
-			return;
-		if (context.singleCol)
-			headerTextRef.current.scroll({top: selected * 2 * remSize, behavior: 'smooth'});
-		scrollParentRef.current.scroll({top: selected*maxHeight, behavior: 'smooth'});
-	}, [selected, headerTextRef.current, scrollParentRef.current]);
-
 	const canShow: boolean = maxHeight > 0;
+
+	const scrollTo = (idx: number) => {
+		setDirection({direction: selected < idx ? 1 : -1, oldHeight: heights[selected], newIdx: idx});
+		setSelected(idx);
+		if (context.singleCol && headerTextRef.current)
+			headerTextRef.current.scroll({top: idx * 2 * remSize, behavior: 'smooth'})
+	}
+
+	const longTransition={duration: 1.0, ease: [0.65, 0, 0.35, 1]};
 
 	if (context.singleCol){
 		const transition={duration: 0.5, ease: [0.65, 0, 0.35, 1]};
 
-		return (
-			<div className={styles.servicesCard}>
-				<button className={styles.dropDown} onClick={() => setIsOpenMobile(isOpen => !isOpen)} style={{cursor: 'pointer'}}>
+		const scrollVariants = {
+			initial: custom => (custom.direction == 0 ? {
+				opacity: 0
+			} : {
+				y: (custom.direction < 0 ? -1*heights[custom.newIdx]-2*remSize : custom.oldHeight+2*remSize) + "px"
+			}),
+			target: {
+				opacity: 1,
+				y: "0px"
+			},
+			exit: custom => (custom.direction == 0 ? {
+				opacity: 0
+			} : {
+				y: (custom.direction > 0 ? -1 : 1) * (Math.max(heights[custom.newIdx], custom.oldHeight)+2*remSize) + "px"
+			}),
+		}
+
+		const getMobileHeader = () => (
+			<Fragment>
+				<button className={styles.dropDown} onClick={() => setMobileMenuOpen(isMenuOpen => !isMenuOpen)} style={{cursor: 'pointer'}}>
 					<div style={{overflow: 'hidden', height: '2rem', textAlign: 'left'}} ref={headerTextRef}>
 						{services.map((service, idx) => (
 							<h1 style={{color: "#fff", paddingBlock: '0.5rem', lineHeight: '1rem'}} key={idx}>{service.toUpperCase()}</h1>
 						))}
 					</div>
-					<AnimatedIcon selected={isOpenMobile ? 1 : 0} style={{width: '2rem', height: '2rem'}}>
+					<AnimatedIcon selected={mobileMenuOpen ? 1 : 0} style={{width: '2rem', height: '2rem'}}>
 						<FontAwesomeIcon icon={faBars} style={{width: '2rem', height: '2rem', backgroundColor: '#4977bb', color: "#fff"}}/>
 						<FontAwesomeIcon icon={faCaretDown} style={{width: '2rem', height: '2rem', backgroundColor: '#4977bb', color: "#fff"}}/>
 					</AnimatedIcon>
 				</button>
 				<AnimatePresence>
-					{isOpenMobile && (
+					{mobileMenuOpen && (
 						<motion.div animate={{height: 'auto', opacity: 1}} initial={{height: 0, opacity: 0}} exit={{height: 0, opacity: 0}} style={{overflow: 'hidden'}} transition={transition}>
 							{services.map((service: string, idx: number) => (
 								<Link className={[styles.dropDown, styles.darken].join(" ")} key={idx} style={idx == selected ? {backgroundColor: '#4977bb'}: {color: '#000'}}
 									href={"/?service=" + getServiceSlug(idx)} scroll={false} replace shallow
 									onClick={() => {
-										setIsOpenMobile(false);
-										setSelected(idx);
+										setMobileMenuOpen(false);
+										scrollTo(idx);
 									}}>
 										{service}
 								</Link>
@@ -125,56 +147,72 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 						</motion.div>
 					)}
 				</AnimatePresence>
-				<div className={[styles.infoParent, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: heights[selected]} : {maxHeight: 0}} ref={scrollParentRef}>
-					{children.map((child: React.ReactNode, idx: number) => (
-						<div style={{height: maxHeight}}>
-							<div className={styles.servicesInfo} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)} key={idx} style={{position: 'relative'}}>
-								<div style={{position: 'absolute', bottom: '1rem', right: '1rem'}}>
-									<div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem', opacity: 0.5}}>
-										<ConditionallyClickableLink className={styles.scrollButtonHolder} onClick={idx != 0 ? () => setSelected(idx-1) : undefined}
-											href={idx != 0 ? "/?service=" + getServiceSlug(idx-1) : null} scroll={false} replace shallow>
-											<FontAwesomeIcon icon={faCaretUp} style={idx == 0 ? {backgroundColor: '#f0f0f0', cursor: 'default'} : {}} className={styles.scrollButtons}/>
-										</ConditionallyClickableLink>
-										<ConditionallyClickableLink className={styles.scrollButtonHolder} onClick={idx != services.length-1 ? () => setSelected(idx+1) : undefined}
-											href={idx != services.length-1 ? "/?service=" + getServiceSlug(idx+1) : null} scroll={false} replace shallow>
-											<FontAwesomeIcon icon={faCaretDown} style={idx == services.length-1 ? {backgroundColor: '#f0f0f0', cursor: 'default'}: {}} className={styles.scrollButtons}/>
-										</ConditionallyClickableLink>
+			</Fragment>
+		);
+
+
+		return (
+			<div className={styles.servicesCard}>
+				{getMobileHeader()}
+				<div className={[styles.infoParent, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: heights[selected]+2*remSize, minHeight: heights[selected]+2*remSize, position: 'relative'} : {maxHeight: 0}}>
+					<AnimatePresence initial={false} custom={direction}>
+						{children.map((child, idx) => idx == selected && (
+							<motion.div className={styles.servicesInfo} key={idx} style={{position: 'absolute', minHeight: heights[idx]}}
+								variants={scrollVariants} custom={direction} initial="initial" animate="target" exit="exit" transition={longTransition}
+							>
+								<div ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)}>
+									<div style={{position: 'absolute', bottom: '1rem', right: '1rem'}}>
+										<div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem', opacity: 0.5}}>
+											<ConditionallyClickableLink className={styles.scrollButtonHolder} onClick={idx != 0 ? () => scrollTo(idx-1) : undefined}
+												href={idx != 0 ? "/?service=" + getServiceSlug(idx-1) : null} scroll={false} replace shallow>
+												<FontAwesomeIcon icon={faCaretUp} style={idx == 0 ? {backgroundColor: '#f0f0f0', cursor: 'default'} : {}} className={styles.scrollButtons}/>
+											</ConditionallyClickableLink>
+											<ConditionallyClickableLink className={styles.scrollButtonHolder} onClick={idx != services.length-1 ? () => scrollTo(idx+1) : undefined}
+												href={idx != services.length-1 ? "/?service=" + getServiceSlug(idx+1) : null} scroll={false} replace shallow>
+												<FontAwesomeIcon icon={faCaretDown} style={idx == services.length-1 ? {backgroundColor: '#f0f0f0', cursor: 'default'}: {}} className={styles.scrollButtons}/>
+											</ConditionallyClickableLink>
+										</div>
 									</div>
+									{child}
 								</div>
-								{child}
-							</div>
-						</div>
-					))}
+							</motion.div>
+						))}
+					</AnimatePresence>
 				</div>
 			</div>
 		);
 	}
 
-
-	const toggleOpen = (prevOpen: boolean): boolean => {
-		if (!prevOpen){
-			const int = setInterval(() => {
-				if (cardRef.current != null)
-					window.scrollTo({top: cardRef.current.offsetTop-headerHeight-8});
-			}, 20);
-			setTimeout(() => clearInterval(int), 1000);
-		}
-		return !prevOpen;
-	};
+	const variants = {
+		initial: custom => (custom.direction == 0 ? {
+			opacity: 0
+		} : {
+			y: custom.direction < 0 ? "-100%" : "100%"
+		}),
+		target: {
+			opacity: 1,
+			y: "0%"
+		},
+		exit: custom => (custom.direction == 0 ? {
+			opacity: 0
+		} : {
+			y: custom.direction > 0 ? "-100%" : "100%"
+		}),
+	}
 
 	return (
-		<div className={styles.servicesCard} ref={cardRef}>
+		<div className={styles.servicesCard}>
 			<div className={[styles.dropDown, styles.animatedMaxHeight].join(" ")}>
 				<h1 style={{color: "#fff"}}>Our Services</h1>
 			</div>
 			<div className={styles.servicesBody}>
-				<div className={[styles.servicesSelect, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight} : {maxHeight: 0}}>
+				<div className={[styles.servicesSelect, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight+2*remSize} : {maxHeight: 0}}>
 					{services.map((service: string, idx: number) => (
 						<div className={styles.serviceOptionWrapper} key={idx}>
 							<Link
 								className={styles.serviceOption}
 								style={selected == idx ? {backgroundColor: '#4977bb', textDecoration: 'none'} : {textDecoration: 'none'}}
-								onClick={() => setSelected(idx)}
+								onClick={() => scrollTo(idx)}
 								href={"/?service=" + getServiceSlug(idx)} shallow replace scroll={false}
 							>
 								<h1 style={{color: selected == idx ? '#fff' : '#000', fontSize: '1.5rem'}}>{service.toUpperCase()}</h1>
@@ -183,9 +221,9 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 						</div>
 					))}
 				</div>
-				<div className={[styles.infoParent, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight} : {maxHeight: 0}} ref={scrollParentRef}>
-					{children.map((child: React.ReactNode, idx: number) => (
-						<div style={{height: maxHeight, position: 'relative'}}>
+
+				<div className={[styles.infoParent, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight+2*remSize, minHeight: maxHeight+2*remSize, minWidth: width} : {maxHeight: 0}}>
+					{calculateSize ? children.map((child: React.ReactNode, idx: number) => (
 							<div className={styles.servicesInfo} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)} key={idx}>
 								<div style={{position: 'absolute', bottom: '1rem', right: '1rem'}}>
 									<div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem', opacity: maxHeight - heights[idx] < (8.5*remSize) ? 0.5 : 1.0}}>
@@ -201,8 +239,29 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 								</div>
 								{child}
 							</div>
-						</div>
-					))}
+					)) : (
+					<AnimatePresence initial={false} custom={direction}>
+						{children.map((child, idx) => idx == selected && (
+							<motion.div className={styles.servicesInfo} key={idx} style={{position: 'absolute', minHeight: maxHeight+2*remSize}}
+								variants={variants} custom={direction} initial="initial" animate="target" exit="exit" transition={longTransition}
+							>
+									<div style={{position: 'absolute', bottom: '1rem', right: '1rem'}}>
+										<div style={{display: 'flex', flexDirection: 'column', gap: '1.5rem', opacity: 0.5}}>
+											<ConditionallyClickableLink className={styles.scrollButtonHolder} onClick={idx != 0 ? () => scrollTo(idx-1) : undefined}
+												href={idx != 0 ? "/?service=" + getServiceSlug(idx-1) : null} scroll={false} replace shallow>
+												<FontAwesomeIcon icon={faCaretUp} style={idx == 0 ? {backgroundColor: '#f0f0f0', cursor: 'default'} : {}} className={styles.scrollButtons}/>
+											</ConditionallyClickableLink>
+											<ConditionallyClickableLink className={styles.scrollButtonHolder} onClick={idx != services.length-1 ? () => scrollTo(idx+1) : undefined}
+												href={idx != services.length-1 ? "/?service=" + getServiceSlug(idx+1) : null} scroll={false} replace shallow>
+												<FontAwesomeIcon icon={faCaretDown} style={idx == services.length-1 ? {backgroundColor: '#f0f0f0', cursor: 'default'}: {}} className={styles.scrollButtons}/>
+											</ConditionallyClickableLink>
+										</div>
+									</div>
+									{child}
+							</motion.div>
+						))}
+					</AnimatePresence>
+					)}
 				</div>
 			</div>
 		</div>

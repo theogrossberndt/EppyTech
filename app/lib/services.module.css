@@ -66,6 +66,7 @@
 	-moz-transition: max-height 1s ease-in-out;
 	-o-transition: max-height 1s ease-in-out;
 	transition: max-height 1s ease-in-out;	
+	transition: min-height 1s ease-in-out;	
 }
 
 .serviceOptionWrapper {
@@ -117,6 +118,7 @@
 	color: #fff;
 	flex-grow: 1;
 	overflow: hidden;
+	position: relative;
 }
 
 .scrollButtons {

@@ -86,6 +86,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
+	white-space: nowrap;
 }
 
 .flag {
@@ -136,6 +137,7 @@
 	border: none;
 	background: none;
 	margin-left: 1rem;
+	font-weight: normal;
 }
 
 .float {

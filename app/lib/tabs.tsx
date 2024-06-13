@@ -1,8 +1,8 @@
 const services = {
 	'managed-services': {
 		title: 'Managed Services - Eppy Tech Connecticut',
-		description: 'With Eppy Tech CT Managed Services get full support met for your local Connecticut business',
-		keyWords: ['managed', 'services', 'connecticut', 'ct']
+		description: 'With Eppy Tech CT Managed Services get full support met for your local Connecticut IT provider',
+		keyWords: ['managed', 'services', 'connecticut', 'ct', 'it', 'provider']
 	},
 	'help-desk': {
 			title: 'Help Desk - Eppy Tech Connecticut',

@@ -13,6 +13,7 @@ import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import { AnimatePresence, motion } from 'framer-motion';
 import RoundedButton from '@/app/lib/roundedButton.tsx';
 import AnimatedRoundedButton from '@/app/lib/animatedRoundedButton.tsx';
+import ConditionallyClickableLink from '@/app/lib/conditionallyClickableLink.tsx';
 
 import {ContextProvider} from "@/app/appProvider.tsx";
 
@@ -70,42 +71,23 @@ const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
 	if (!context)
 		return (<div/>)
 
-/*
-						<button className={styles.roundedButton} onClick={()=> setExpanded(oldExpanded => ({open: !oldExpanded.open, inProgress: true}))}>
-							<div style={{width: '2em', height: '2em', position: 'relative'}}>
-								<AnimatePresence initial={false}>
-									{expanded.open ? (
-										<motion.div animate={animate} initial={inOut1} exit={inOut1} key={0} style={{position: 'absolute'}}>
-											<FontAwesomeIcon icon={faCaretDown} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
-										</motion.div>
-									) : (
-										<motion.div animate={animate} initial={inOut2} exit={inOut2} key={1} style={{position: 'absolute'}}>
-											<FontAwesomeIcon icon={faBars} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
-										</motion.div>
-									)}
-								</AnimatePresence>
-							</div>
-						</button>
-*/
-
 	return (
-		<div className={styles.header} ref={refFunc}>
+		<header className={styles.header} ref={refFunc}>
 			<div className={styles.banner}>
 				Call (203) 655-5177 for an appointment · Monday - Friday 8:30 am to 5:30 pm
 			</div>
 			{context.isMobile ? (
 				<Fragment>
 					<div className={styles.nav}>
-						<div className={styles.logoWrapper}>
+						<ConditionallyClickableLink className={styles.logoWrapper} href="/">
 							<ExportedImage
 								src={logoImageStatic}
 								alt="Eppy Tech Logo"
 								priority
-								onClick={() => router.push("/")}
 								fill
 								style={{cursor: "pointer", objectFit: 'contain'}}
 							/>
-						</div>
+						</ConditionallyClickableLink>
 						<AnimatedRoundedButton onClick={() => setExpanded(oldExpanded => ({open: !oldExpanded.open, inProgress: true}))} style={{width: '2rem', height: '2rem'}}>
 							<FontAwesomeIcon icon={faBars} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
 							<FontAwesomeIcon icon={faCaretDown} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
@@ -117,41 +99,47 @@ const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
 								onAnimationComplete={() => setExpanded(oldExpanded => ({open: oldExpanded.open, inProgress: false}))}
 							>
 								<div className={styles.hr}/>
-								<div className={styles.pageLabel} onClick={() => route("/")} style={{color: houseColor}}>
+								<ConditionallyClickableLink className={styles.pageLabel} href="/" style={{color: houseColor}}>
 									<FontAwesomeIcon icon={faHouse} style={{color: houseColor}}/>
 									Home
-								</div>
-								<div className={styles.pageLabel} onClick={() => route("/contact")} style={{color: contactColor}}>
+								</ConditionallyClickableLink>
+								<ConditionallyClickableLink className={styles.pageLabel} href="/contact" style={{color: contactColor}}>
 									<FontAwesomeIcon icon={faPaperPlane} style={{color: contactColor}}/>
 									Contact Us
-								</div>
+								</ConditionallyClickableLink>
 							</motion.div>
 						)}
 					</AnimatePresence>
 				</Fragment>
 			) : (
-				<div className={styles.nav}>
-					<ExportedImage
-						src={logoImageStatic}
-						alt="Eppy Tech Logo"
-						height={80}
-						width={300}
-						priority
-						onClick={() => route("/")}
-						style={{cursor: "pointer"}}
-					/>
-					<button className={styles.consultationButton} onClick={() => route("/contact")}>FREE CONSULTATION</button>
+				<div className={styles.nav} style={{paddingInline: '2vw'}}>
+					<ConditionallyClickableLink href="/" className={styles.logoWrapper}>
+						<ExportedImage
+							src={logoImageStatic}
+							alt="Eppy Tech Logo"
+							priority
+							fill
+							style={{cursor: "pointer", objectFit: 'contain'}}
+						/>
+					</ConditionallyClickableLink>
+					<ConditionallyClickableLink href="/contact">
+						<RoundedButton tooltip="FREE CONSULTATION" className={styles.consultationButton}/>
+					</ConditionallyClickableLink>
 					<div style={{display: 'flex'}}>
-						<RoundedButton onClick={() => route("/")} style={{color: houseColor, marginLeft: '1rem', height: '5rem'}} tooltip={'Home'}>
-							<FontAwesomeIcon icon={faHouse} style={{color: houseColor, flexGrow: 1}}/>
-						</RoundedButton>
-						<RoundedButton onClick={() => route("/contact")} style={{color: contactColor, marginLeft: '1rem', height: '5rem'}} tooltip={'Contact Us'}>
-							<FontAwesomeIcon icon={faPaperPlane} style={{color: contactColor, flexGrow: 1}}/>
-						</RoundedButton>
+						<ConditionallyClickableLink href="/">
+							<RoundedButton style={{color: houseColor, height: '5rem'}} tooltip={'Home'}>
+								<FontAwesomeIcon icon={faHouse} style={{color: houseColor, flexGrow: 1}}/>
+							</RoundedButton>
+						</ConditionallyClickableLink>
+						<ConditionallyClickableLink href="/contact">
+							<RoundedButton style={{color: contactColor, marginLeft: '1rem', height: '5rem'}} tooltip={'Contact Us'}>
+								<FontAwesomeIcon icon={faPaperPlane} style={{color: contactColor, flexGrow: 1}}/>
+							</RoundedButton>
+						</ConditionallyClickableLink>
 					</div>
 				</div>
 			)}
-		</div>
+		</header>
 	);
 }
 

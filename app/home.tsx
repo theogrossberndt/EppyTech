@@ -7,6 +7,7 @@ import frontImageStatic from "/public/images/front.jpg";
 import logoImageStatic from "/public/images/logoCropped.jpg";
 import styles from "./page.module.css";
 import Header from "@/app/lib/header.tsx";
+import Footer from "@/app/lib/footer.tsx";
 import Services from "@/app/lib/services.tsx";
 import { ManagedServices, HelpDesk, DataProtection, CloudComputing, PhoneSystems, BusinessITSupport, RepairServices } from "@/app/lib/tabs.tsx";
 
@@ -92,6 +93,7 @@ export default function Home() {
 					</div>
 				</div>
 			</main>
+			<Footer/>
 		</div>
 	);
 }

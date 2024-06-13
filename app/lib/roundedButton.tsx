@@ -5,11 +5,12 @@ type RoundedButtonProps = {
 	children?: React.ReactNode | Array<React.ReactNode>;
 	onClick?: React.MouseEventHandler<HTMLElement>;
 	style?: React.CSSProperties;
+	className?: string;
 }
 
-const RoundedButton = ({tooltip, children, onClick, style}: IconButtonProps) => {
+const RoundedButton = ({tooltip, children, onClick, style, className}: IconButtonProps) => {
 	return (
-		<button className={styles.roundedButton} onClick={onClick} style={style}>
+		<button className={[styles.roundedButton, className ?? ""].join(" ")} onClick={onClick} style={style}>
 				{children}
 				{tooltip && (
 					tooltip

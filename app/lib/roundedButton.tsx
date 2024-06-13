@@ -1,6 +1,6 @@
 import styles from "./roundedButton.module.css";
 
-type RoundedButtonProps = {
+interface RoundedButtonProps extends React.ComponentPropsWithoutRef<"button"> {
 	tooltip?: string;
 	children?: React.ReactNode | Array<React.ReactNode>;
 	onClick?: React.MouseEventHandler<HTMLElement>;
@@ -8,9 +8,9 @@ type RoundedButtonProps = {
 	className?: string;
 }
 
-const RoundedButton = ({tooltip, children, onClick, style, className}: IconButtonProps) => {
+const RoundedButton = ({tooltip, children, onClick, style, className, ...buttonProps}: IconButtonProps) => {
 	return (
-		<button className={[styles.roundedButton, className ?? ""].join(" ")} onClick={onClick} style={style}>
+		<button className={[styles.roundedButton, className ?? ""].join(" ")} onClick={onClick} style={style} {...buttonProps}>
 				{children}
 				{tooltip && (
 					tooltip

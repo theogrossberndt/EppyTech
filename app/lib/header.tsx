@@ -88,26 +88,36 @@ const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
 								style={{cursor: "pointer", objectFit: 'contain'}}
 							/>
 						</ConditionallyClickableLink>
-						<AnimatedRoundedButton onClick={() => setExpanded(oldExpanded => ({open: !oldExpanded.open, inProgress: true}))} style={{width: '2rem', height: '2rem'}}>
-							<FontAwesomeIcon icon={faBars} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
-							<FontAwesomeIcon icon={faCaretDown} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
-						</AnimatedRoundedButton>
+						<nav role="navigation" aria-label="Main menu">
+							<AnimatedRoundedButton onClick={() => setExpanded(oldExpanded => ({open: !oldExpanded.open, inProgress: true}))} style={{width: '2rem', height: '2rem'}}
+								aria-expanded={expanded.open} aria-haspopup="true" aria-controls="mobileMenu"
+							>
+								<FontAwesomeIcon icon={faBars} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
+								<FontAwesomeIcon icon={faCaretDown} style={{width: '2em', height: '2em', color: '#4977bb'}}/>
+							</AnimatedRoundedButton>
+						</nav>
 					</div>
 					<AnimatePresence>
 						{expanded.open && (
-							<motion.div animate={{height: 'auto', opacity: 1}} initial={{height: 0, opacity: 0}} exit={{height: 0, opacity: 0}} style={{overflow: 'hidden'}} transition={transition}
-								onAnimationComplete={() => setExpanded(oldExpanded => ({open: oldExpanded.open, inProgress: false}))}
+							<motion.nav animate={{height: 'auto', opacity: 1}} initial={{height: 0, opacity: 0}} exit={{height: 0, opacity: 0}} style={{overflow: 'hidden', width: '100%'}} transition={transition}
+								onAnimationComplete={() => setExpanded(oldExpanded => ({open: oldExpanded.open, inProgress: false}))} aria-hidden="false" role="navigation" aria-label="Main menu"
 							>
-								<div className={styles.hr}/>
-								<ConditionallyClickableLink className={styles.pageLabel} href="/" style={{color: houseColor}}>
-									<FontAwesomeIcon icon={faHouse} style={{color: houseColor}}/>
-									Home
-								</ConditionallyClickableLink>
-								<ConditionallyClickableLink className={styles.pageLabel} href="/contact" style={{color: contactColor}}>
-									<FontAwesomeIcon icon={faPaperPlane} style={{color: contactColor}}/>
-									Contact Us
-								</ConditionallyClickableLink>
-							</motion.div>
+								<ul style={{listStyleType: 'none', padding: 0}} id="mobileMenu">
+									<div className={styles.hr}/>
+									<li className={styles.pageLabel}>
+										<div onClick={() => setRouteTo("/")} role="link" style={{color: houseColor}} tabIndex={0}>
+											<FontAwesomeIcon icon={faHouse} style={{color: houseColor}}/>
+											Home
+										</div>
+									</li>
+									<li className={styles.pageLabel}>
+										<ConditionallyClickableLink href="/contact" style={{color: contactColor}}>
+											<FontAwesomeIcon icon={faPaperPlane} style={{color: contactColor}}/>
+											Contact Us
+										</ConditionallyClickableLink>
+									</li>
+								</ul>
+							</motion.nav>
 						)}
 					</AnimatePresence>
 				</Fragment>

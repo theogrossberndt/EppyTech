@@ -2,7 +2,7 @@ import { useState } from 'react';
 import RoundedButton from '@/app/lib/roundedButton.tsx';
 import AnimatedIcon from '@/app/lib/animatedIcon.tsx';
 
-type AnimatedRoundedButtonProps = {
+interface AnimatedRoundedButtonProps extends React.ComponentPropsWithoutRef<"button"> {
 	tooltip?: string;
 	children?: React.ReactNode | Array<React.ReactNode>;
 	onClick?: React.MouseEventHandler<HTMLElement>;
@@ -10,7 +10,7 @@ type AnimatedRoundedButtonProps = {
 	parentStyle?: React.CSSProperties;
 }
 
-const AnimatedRoundedButton = ({tooltip, children, onClick, style, parentStyle}: AnimatedRoundedButtonProps) => {
+const AnimatedRoundedButton = ({tooltip, children, onClick, style, parentStyle, ...buttonProps}: AnimatedRoundedButtonProps) => {
 	const [ currentChild, setCurrentChild ] = useState<number>(0);
 
 	const clickHandler = () => {
@@ -19,7 +19,7 @@ const AnimatedRoundedButton = ({tooltip, children, onClick, style, parentStyle}:
 	}
 
 	return (
-		<RoundedButton onClick={clickHandler} tooltip={tooltip} style={parentStyle}>
+		<RoundedButton onClick={clickHandler} tooltip={tooltip} style={parentStyle} {...buttonProps}>
 			<AnimatedIcon selected={currentChild} style={style}>
 				{children}
 			</AnimatedIcon>

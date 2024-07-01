@@ -20,7 +20,6 @@ export default function ContactPage(){
 	const [errors, setErrors] = useState<{[key: string]: Array<string>}>({});
 	// 0: fillable, 1: loading (sending email), 2: submitted
 	const [formState, setFormState] = useState<number>(0);
-	const [maxDimensions, setMaxDimensions] = useState({width: 0, height: 0});
 	const nameToReadable: {[key: string]: string} = {fname: "first name", lname: "last name", email: "email", phone: "phone number", message: "message"};
 
 	const context = useContext(ContextProvider);
@@ -93,32 +92,13 @@ export default function ContactPage(){
 		);
 	}
 
-	useEffect(() => {
-		if (!formRef.current)
-			return;
-		const resizeObserver = new ResizeObserver(() => {
-			if (formRef.current != null){
-				const cs = getComputedStyle(formRef.current);
-				var paddingX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
-				var paddingY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-
-				var borderX = parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth);
-				var borderY = parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth);
-
-				setMaxDimensions({width: formRef.current.offsetWidth-paddingX-borderX, height: formRef.current.offsetHeight-paddingY-borderY});
-			}
-		});
-		resizeObserver.observe(formRef.current);
-		return () => resizeObserver.disconnect();
-	}, [formRef.current])
-
 	if (!context)
 		return (<div/>);
 
 	return (
 		<div>
-			<Header selectedPage={1} refFunc={(el) => {}}/>
-			<main className={styles.main} style={context.singleCol ? {flexDirection: 'column'} : {}}id="main">
+			<Header selectedPage={1}/>
+			<main className={styles.main} style={context.singleCol ? {flexDirection: 'column'} : {}} id="main">
 				<div style={context.singleCol ? {} : {maxWidth: '50%'}}>
 					<h1>Get A Free Consultation</h1>
 					<br/>
@@ -169,7 +149,7 @@ export default function ContactPage(){
 						</form>
 						<AnimatePresence>
 							{formState == 2 && (
-								<motion.div style={{width: maxDimensions.width, height: maxDimensions.height, position: 'absolute', backgroundColor: '#fff'}}
+								<motion.div style={{top: '0.5rem', bottom: '0.5rem', left: '1rem', right: '1rem', position: 'absolute', backgroundColor: '#fff'}}
 								animate={{opacity: '100%'}} initial={{opacity: '0%'}} exit={{opacity: '0%'}} transition={{duration: 1, ease: [0.65, 0, 0.35, 1]}}
 								onAnimationComplete={def => {
 									if (formRef.current)

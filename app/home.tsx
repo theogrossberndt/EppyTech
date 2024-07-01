@@ -14,15 +14,8 @@ import { ManagedServices, HelpDesk, DataProtection, CloudComputing, PhoneSystems
 import {ContextProvider} from "@/app/appProvider.tsx";
 
 export default function Home() {
-	const [headerHeight, setHeaderHeight] = useState<number>(0);
 	const [aboutHeight, setAboutHeight] = useState<number>(0);
-	const aboutRef = useRef(null);
 	const router = useRouter();
-
-	const headerRefFunc = (el: HTMLDivElement): void => {
-		if (el != null)
-			setHeaderHeight(el.offsetHeight);
-	}
 
 	const context = useContext(ContextProvider);
 
@@ -31,7 +24,7 @@ export default function Home() {
 
 	return (
 		<div>
-			<Header selectedPage={0} refFunc={headerRefFunc}/>
+			<Header selectedPage={0}/>
 			<main>
 				<div className={styles.body}>
 					<div className={[styles.about, context.singleCol ? styles.aboutMobile : ""].join(" ")}>
@@ -59,7 +52,7 @@ export default function Home() {
 										priority
 									/>
 								</div>
-								<div ref={el => {
+								<div ref={(el: HTMLDivElement | null) => {
 									if (el != null){
 										console.log(el.clientHeight);
 										setAboutHeight(el.clientHeight);
@@ -81,7 +74,7 @@ export default function Home() {
 						</div>
 					</div>
 					<div className={styles.about}>
-						<Services services={["Managed Services", "Help Desk", "Data Protection", "Cloud Computing", "Phone Systems", "Business IT Support", "Repair Services"]} headerHeight={headerHeight}>
+						<Services services={["Managed Services", "Help Desk", "Data Protection", "Cloud Computing", "Phone Systems", "Business IT Support", "Repair Services"]}>
 							<ManagedServices/>
 							<HelpDesk/>
 							<DataProtection/>

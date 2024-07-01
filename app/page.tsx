@@ -14,8 +14,8 @@ export default function Page() {
 }
 
 export async function generateMetadata({params, searchParams}: Props, parent: ResolvingMetadata): Promise<Metadata> {
-	if (searchParams.service && isServiceSlug(searchParams.service))
-		return getMetadata(searchParams.service)
+	if (searchParams.service && isServiceSlug(searchParams.service as string))
+		return getMetadata(searchParams.service as string)
 
 	return {
 		title: 'Eppy Tech Connecticut',

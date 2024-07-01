@@ -17,14 +17,17 @@ import { getServiceSlug, slugToIdx } from '@/app/lib/tabs.tsx';
 
 type ServicesProps = {
 	services: Array<string>;
-	headerHeight: number;
 	children: Array<React.ReactNode>;
 };
 
-const Services = ({services, headerHeight, children}: ServicesProps): React.ReactElement => {
+type DirectionType = {
+	direction: -1 | 1;
+	oldHeight: number;
+	newIdx: number;
+}
+
+const Services = ({services, children}: ServicesProps): React.ReactElement => {
 	const context = useContext(ContextProvider);
-	if (!context)
-		return (<div/>);
 
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -32,14 +35,14 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 	console.log("Service slug: ", serviceSlug);
 
 	const [selected, setSelected] = useState<number>(slugToIdx(serviceSlug));
-	const [direction, setDirection] = useState<number>(0);
+	const [direction, setDirection] = useState<DirectionType>();
 	const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
-	const headerTextRef = useRef<HTMLDivElement>(null);
+	const headerTextRef = useRef<HTMLButtonElement>(null);
 
 	const pheights: Array<number> = children.map(child => 0);
 	const [heights, setHeights] = useState<Array<number>>(pheights);
-	const [width, setWidth] = useState<>(0);
+	const [width, setWidth] = useState<number>(0);
 	const [remSize, setRemSize] = useState<number>(parseInt(getComputedStyle(document.documentElement).fontSize));
 	const [calculateSize, setCalculateSize] = useState<boolean>(true);
 
@@ -78,7 +81,7 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 		}
 		setHeights(pheights);
 		setCalculateSize(true);
-	}, 300, {leading: true, trailing: true}), [setHeights, setCalculateSize])
+	}, 300, {leading: true, trailing: true}), [setHeights, setCalculateSize, setRemSize, pheights, remSize])
 
 	console.log("Calculating size: ", calculateSize);
 
@@ -88,7 +91,7 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 			window.removeEventListener('resize', debouncedCallback);
 			debouncedCallback.cancel();
 		};
-	}, []);
+	}, [debouncedCallback]);
 
 	const canShow: boolean = maxHeight > 0;
 	console.log(direction);
@@ -97,45 +100,38 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 		console.log(selected, idx);
 		setDirection({direction: selected < idx ? 1 : -1, oldHeight: heights[selected], newIdx: idx});
 		setSelected(idx);
-		if (context.singleCol && headerTextRef.current)
-			headerTextRef.current.scroll({top: idx * 2 * remSize, behavior: 'smooth'})
+//		if (context && context.singleCol && headerTextRef.current)
+//			headerTextRef.current.scroll({top: idx * 2 * remSize, behavior: 'smooth'})
 	}
 
 	const longTransition={duration: 1.0, ease: [0.65, 0, 0.35, 1]};
 
-	if (context.singleCol){
+	if (!context)
+		return (<div/>);
+
+	if (context && context.singleCol){
 		const transition={duration: 0.5, ease: [0.65, 0, 0.35, 1]};
 
 		const scrollVariants = {
-			initial: custom => (custom.direction == 0 ? {
-				opacity: 0
-			} : {
+			initial: (custom: DirectionType) => ({
 				y: (custom.direction < 0 ? -1*heights[custom.newIdx]-2*remSize : custom.oldHeight+2*remSize) + "px"
 			}),
 			target: {
-				opacity: 1,
 				y: "0px"
 			},
-			exit: custom => (custom.direction == 0 ? {
-				opacity: 0
-			} : {
+			exit: (custom: DirectionType) => ({
 				y: (custom.direction > 0 ? -1 : 1) * (Math.max(heights[custom.newIdx], custom.oldHeight)+2*remSize) + "px"
 			}),
 		}
 
 		const headerScrollVariants = {
-			initial: custom => (custom.direction == 0 ? {
-				opacity: 0
-			} : {
+			initial: (custom: DirectionType) => ({
 				y: (custom.direction < 0 ? -1 : 1) * (headerTextRef.current == null ? (5.125*remSize) : headerTextRef.current.offsetHeight) + "px"
 			}),
 			target: {
-				opacity: 1,
 				y: "0px"
 			},
-			exit: custom => (custom.direction == 0 ? {
-				opacity: 0
-			} : {
+			exit: (custom: DirectionType) => ({
 				y: (custom.direction < 0 ? 1 : -1) * (headerTextRef.current == null ? (5.125*remSize) : headerTextRef.current.offsetHeight) + "px"
 			}),
 		}
@@ -227,18 +223,13 @@ const Services = ({services, headerHeight, children}: ServicesProps): React.Reac
 	}
 
 	const variants = {
-		initial: custom => (custom.direction == 0 ? {
-			opacity: 0
-		} : {
+		initial: (custom: DirectionType) => ({
 			y: custom.direction < 0 ? "-100%" : "100%"
 		}),
 		target: {
-			opacity: 1,
 			y: "0%"
 		},
-		exit: custom => (custom.direction == 0 ? {
-			opacity: 0
-		} : {
+		exit: (custom: DirectionType) => ({
 			y: custom.direction > 0 ? "-100%" : "100%"
 		}),
 	}

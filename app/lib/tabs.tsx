@@ -1,4 +1,14 @@
-const services = {
+type ServiceDefType = {
+	title: string;
+	description: string;
+	keyWords: Array<string>;
+};
+
+type ServicesType = {
+	[key: string]: ServiceDefType;
+};
+
+const services: ServicesType = {
 	'managed-services': {
 		title: 'Managed Services - Eppy Tech Connecticut',
 		description: 'With Eppy Tech CT Managed Services get full support met for your local Connecticut IT provider',
@@ -34,23 +44,24 @@ const services = {
 		description: 'Let us repair your laptop, desktop, or printer in our complete break-fix shop',
 		keyWords: ['repair', 'laptop', 'desktop', 'printer', 'computer', 'connecticut', 'ct']
 	},
-	inOrder: ['managed-services', 'help-desk', 'data-protection', 'cloud-computing', 'phone-systems', 'business-it-support', 'repair-services']
 }
 
-export function getMetadata(serviceCode) {
+const servicesOrder: Array<string> = ['managed-services', 'help-desk', 'data-protection', 'cloud-computing', 'phone-systems', 'business-it-support', 'repair-services'];
+
+export function getMetadata(serviceCode: string): ServiceDefType {
 	return services[serviceCode];
 }
 
-export function isServiceSlug(slug){
+export function isServiceSlug(slug: string): boolean{
 	return slug in services;
 }
 
-export function getServiceSlug(idx){
-	return services.inOrder[idx];
+export function getServiceSlug(idx: number): string {
+	return servicesOrder[idx];
 }
 
-export function slugToIdx(slug){
-	return services.inOrder.indexOf(slug);
+export function slugToIdx(slug: string): number{
+	return servicesOrder.indexOf(slug);
 }
 
 export function ManagedServices(): React.ReactElement {

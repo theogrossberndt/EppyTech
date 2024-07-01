@@ -4,7 +4,7 @@ import AnimatedIcon from '@/app/lib/animatedIcon.tsx';
 
 interface AnimatedRoundedButtonProps extends React.ComponentPropsWithoutRef<"button"> {
 	tooltip?: string;
-	children?: React.ReactNode | Array<React.ReactNode>;
+	children: Array<React.ReactNode>;
 	onClick?: React.MouseEventHandler<HTMLElement>;
 	style?: React.CSSProperties;
 	parentStyle?: React.CSSProperties;
@@ -13,9 +13,9 @@ interface AnimatedRoundedButtonProps extends React.ComponentPropsWithoutRef<"but
 const AnimatedRoundedButton = ({tooltip, children, onClick, style, parentStyle, ...buttonProps}: AnimatedRoundedButtonProps) => {
 	const [ currentChild, setCurrentChild ] = useState<number>(0);
 
-	const clickHandler = () => {
-		setCurrentChild(oldCurrentChild => (oldCurrentChild+1)%children.length);
-		onClick();
+	const clickHandler = (e: React.MouseEvent<HTMLElement>) => {
+		setCurrentChild((oldCurrentChild: number) => (oldCurrentChild+1)%children.length);
+		onClick?.(e);
 	}
 
 	return (

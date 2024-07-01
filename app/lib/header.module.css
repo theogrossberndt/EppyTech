@@ -56,26 +56,6 @@
 	padding: 1rem;
 }
 
-.roundedButton {
-	border-radius: 100vmax;
-	margin-left: 1rem;
-	padding: 1rem;
-	background: #fff;
-	transition: background 0.5s;
-	border: none;
-	font-size: 1rem;
-	font-weight: bold;
-	cursor: pointer;
-}
-
-.roundedButton:hover {
-	background: #f0f0f0;
-}
-
-.roundedButton:active {
-	background: #e0e0e0;
-}
-
 .consultationButton {
 	background-color: #4977BB;
 	color: #fff;
@@ -103,18 +83,4 @@
 .hr {
 	height: 1px;
 	background-color: #a4bbdd;
-}
-
-.iconButton {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	gap: 0.5rem;
-	height: 5rem;
-	text-wrap: nowrap;
-}
-
-.iconButton > * {
-	flex-grow: 1;
 }

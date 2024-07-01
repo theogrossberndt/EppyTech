@@ -17,13 +17,7 @@ import logoImageStatic from "/public/images/logoCropped.jpg";
 
 import {ContextProvider} from "@/app/appProvider.tsx";
 
-type RefFuncType = (element: HTMLDivElement) => void
-type HeaderProps = {
-	selectedPage: number;
-	refFunc: RefFuncType;
-};
-
-const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
+const Footer = (): React.ReactElement => {
 	const context = useContext(ContextProvider);
 
 	if (!context)
@@ -65,16 +59,4 @@ const Header = ({selectedPage, refFunc}: HeaderProps): React.ReactElement => {
 	);
 }
 
-export default Header;
-
-/*
-						<button onClick={() => route("/")} className={[styles.roundedButton, styles.iconButton].join(' ')} style={{color: houseColor}}>
-							<FontAwesomeIcon icon={faHouse} style={{color: houseColor}}/>
-							Home
-						</button>
-						<button onClick={() => route("/contact")} className={[styles.roundedButton, styles.iconButton].join(' ')} style={{color: contactColor}}>
-							<FontAwesomeIcon icon={faPaperPlane} style={{color: contactColor}}/>
-							Contact Us
-						</button>
-
-*/
+export default Footer;

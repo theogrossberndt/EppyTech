@@ -11,37 +11,37 @@ type ServicesType = {
 const services: ServicesType = {
 	'managed-services': {
 		title: 'Managed Services - Eppy Tech Connecticut',
-		description: 'With Eppy Tech CT Managed Services get full support met for your local Connecticut IT provider',
+		description: 'With Managed Services provided by Eppy Tech, get all of your IT support needs met for your local Connecticut business.',
 		keyWords: ['managed', 'services', 'connecticut', 'ct', 'it', 'provider']
 	},
 	'help-desk': {
 			title: 'Help Desk - Eppy Tech Connecticut',
-			description: 'With Eppy Tech help desk support get assistance on a variety of IT needs',
+			description: 'With Help Desk support provided by Eppy Tech, get assistance on a variety of IT needs for your local Connecticut business.',
 			keyWords: ['help', 'desk', 'connecticut', 'ct']
 	},
 	'data-protection': {
 		title: 'Data Protection - Eppy Tech Connecticut',
-		description: "With Eppy Tech protect your company's critical data from disaster",
+		description: "With Eppy Tech's Data Protection services, protect your local Connecticut business's critical data from disaster.",
 		keyWords: ['data', 'protection', 'connecticut', 'ct']
 	},
 	'cloud-computing': {
 		title: 'Cloud Computing - Eppy Tech Connecticut',
-		description: 'With Eppy Tech get your cloud services needs met with all the benefits of hosting a server',
+		description: "With Eppy Tech's Cloud Computing services, get your local Connecticut business's needs met with all the benefits of hosting a server but none of the upkeep.",
 		keyWords: ['cloud', 'computing', 'hosting', 'server', 'connecticut', 'ct']
 	},
 	'phone-systems': {
 		title: 'VoIP Phone Systems - Eppy Tech Connecticut',
-		description: 'With Eppy Tech VoIP phone systems make communication easier',
+		description: "With Eppy Tech's VoIP phone systems, make communication at your local Connecticut business easier.",
 		keyWords: ['voip', 'phone', 'connecticut', 'ct']
 	},
 	'business-it-support': {
 		title: 'Business IT Support - Eppy Tech Connecticut',
-		description: 'With Eppy Tech get hourly business IT support for all your computer needs',
+		description: "With Eppy Tech's Business IT Support, get hourly services for all your Connecticut business's computer needs.",
 		keyWords: ['business', 'support', 'connecticut', 'ct']
 	},
 	'repair-services': {
 		title: 'Repair Services - Eppy Tech Connecticut',
-		description: 'Let us repair your laptop, desktop, or printer in our complete break-fix shop',
+		description: "Have us repair your laptop, desktop, or printer in our complete break-fix shop.",
 		keyWords: ['repair', 'laptop', 'desktop', 'printer', 'computer', 'connecticut', 'ct']
 	},
 }
@@ -49,7 +49,17 @@ const services: ServicesType = {
 const servicesOrder: Array<string> = ['managed-services', 'help-desk', 'data-protection', 'cloud-computing', 'phone-systems', 'business-it-support', 'repair-services'];
 
 export function getMetadata(serviceCode: string): ServiceDefType {
-	return services[serviceCode];
+	const data: ServiceDefType = services[serviceCode];
+	return {
+		...data,
+		openGraph: {
+			title: data.title,
+			description: data.description,
+			siteName: 'Eppy Tech Connecticut',
+			locale: 'en_US',
+			type: 'website'
+		}
+	};
 }
 
 export function isServiceSlug(slug: string): boolean{

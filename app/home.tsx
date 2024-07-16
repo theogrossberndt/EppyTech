@@ -1,11 +1,11 @@
 "use client";
 
 import { useContext, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import ExportedImage from "next-image-export-optimizer";
 import frontImageStatic from "/public/images/front.jpg";
 import logoImageStatic from "/public/images/logoCropped.jpg";
 import styles from "./page.module.css";
+import roundedStyles from "@/app/lib/roundedButton.module.css";
 import Header from "@/app/lib/header.tsx";
 import Footer from "@/app/lib/footer.tsx";
 import Services from "@/app/lib/services.tsx";
@@ -15,7 +15,6 @@ import {ContextProvider} from "@/app/appProvider.tsx";
 
 export default function Home() {
 	const [aboutHeight, setAboutHeight] = useState<number>(0);
-	const router = useRouter();
 
 	const context = useContext(ContextProvider);
 
@@ -31,14 +30,16 @@ export default function Home() {
 						<div className={styles.aboutPane} style={context.singleCol ? {aspectRatio: "2/1"} : {}}>
 							<ExportedImage
 								src={frontImageStatic}
-								alt="Eppy Tech Building"
+								alt="The front of the Eppy Tech office"
 								fill
 								priority
 								style={{borderRadius: '2vw', objectFit: 'cover'}}
 								sizes="(max-width: 1024px) 100vw, 50vw"
 							/>
 							{context.isMobile && (
-								<button className={styles.consultationButton} onClick={() => router.push("/contact")}>FREE CONSULTATION</button>
+								<ConditionallyClickableLink href="/contact" className={[roundedStyles.roundedButton, styles.consultationButton].join(" ")}>
+									FREE CONSULTATION
+								</ConditionallyClickableLink>
 							)}
 						</div>
 						<div className={styles.aboutPane}>
@@ -46,13 +47,13 @@ export default function Home() {
 								<div className={styles.overlayDivCenter}>
 									<ExportedImage
 										src={logoImageStatic}
-										alt="Eppy Tech Building"
 										width={Math.min(400, aboutHeight-32)}
 										height={Math.min(400, aboutHeight-32)}
 										priority
+										aria-hidden={true}
 									/>
 								</div>
-								<div ref={(el: HTMLDivElement | null) => {
+								<article ref={(el: HTMLDivElement | null) => {
 									if (el != null){
 										console.log(el.clientHeight);
 										setAboutHeight(el.clientHeight);
@@ -69,7 +70,7 @@ export default function Home() {
 									</p><br/><p>
 									Our expert managed IT services team will answer the questions you have and provide the service and support you count on. Plus, our programs are flexible, giving you the capacity to scale up or down as your business grows and changes. We’ll help make sure that your systems are operating at an optimal level so you can focus on building revenue and growing your business.
 									</p>
-								</div>
+								</article>
 							</div>
 						</div>
 					</div>

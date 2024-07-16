@@ -1,30 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { Fragment, useContext, useEffect, useState } from 'react';
 import styles from "./footer.module.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { faPhone } from '@fortawesome/free-solid-svg-icons'
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
-import { AnimatePresence, motion } from 'framer-motion';
-import RoundedButton from '@/app/lib/roundedButton.tsx';
-import AnimatedRoundedButton from '@/app/lib/animatedRoundedButton.tsx';
-import ConditionallyClickableLink from '@/app/lib/conditionallyClickableLink.tsx';
 import ExportedImage from "next-image-export-optimizer";
 import logoImageStatic from "/public/images/logoCropped.jpg";
 
-import {ContextProvider} from "@/app/appProvider.tsx";
-
 const Footer = (): React.ReactElement => {
-	const context = useContext(ContextProvider);
-
-	if (!context)
-		return (<div/>)
-
 	return (
-		<div className={styles.footer}>
+		<footer className={styles.footer}>
 			<div className={styles.topPane}>
 				<div className={styles.logoWrapper}>
 					<ExportedImage
@@ -37,15 +24,15 @@ const Footer = (): React.ReactElement => {
 				</div>
 				<div>
 					<div className={styles.textLine}>
-						<FontAwesomeIcon icon={faLocationDot} style={{width: '1.5rem', height: '1.5rem', color: '#4977bb'}}/>
+						<FontAwesomeIcon icon={faLocationDot} style={{width: '1.5rem', height: '1.5rem', color: '#4977bb', ariaLabel: "Location"}}/>
 						100 Heights Road, Darien CT, 06820
 					</div>
 					<div className={styles.textLine}>
-						<FontAwesomeIcon icon={faPhone} style={{width: '1.5rem', height: '1.5rem', color: '#4977bb'}}/>
+						<FontAwesomeIcon icon={faPhone} style={{width: '1.5rem', height: '1.5rem', color: '#4977bb', ariaLabel: "Phone number"}}/>
 						(203) 655-5177
 					</div>
 					<div className={styles.textLine}>
-						<FontAwesomeIcon icon={faEnvelope} style={{width: '1.5rem', height: '1.5rem', color: '#4977bb'}}/>
+						<FontAwesomeIcon icon={faEnvelope} style={{width: '1.5rem', height: '1.5rem', color: '#4977bb', ariaLabel: "Email"}}/>
 						support@eppytech.com
 					</div>
 				</div>
@@ -55,7 +42,7 @@ const Footer = (): React.ReactElement => {
 					<Link href="/signIn" className={styles.link}>INTERNAL TOOLS</Link>
 				</div>
 			</div>
-		</div>
+		</footer>
 	);
 }
 

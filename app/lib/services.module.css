@@ -95,12 +95,18 @@
 	height: 100%;
 }
 
-.serviceOptionWrapper:hover .serviceOption {
+.serviceOptionWrapper:hover .serviceOption, .serviceOption:focus {
 	background-color: #7a9ccd;
+	outline: none;
 }
 
-.serviceOptionWrapper:hover .flag {
+.serviceOptionWrapper:hover .flag, .serviceOption:focus + .flag {
 	background-color: #84b9eb;
+}
+
+.serviceOptionWrapper:focus-within {
+	outline: solid;
+	outline-offset: -3px;
 }
 
 .servicesInfo {

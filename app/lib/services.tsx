@@ -40,6 +40,7 @@ const Services = ({services, children}: ServicesProps): React.ReactElement => {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
 	const headerTextRef = useRef<HTMLButtonElement>(null);
+	const servicesSelectRef = useRef<HTMLDivElement>(null);
 
 	const pheights: Array<number> = children.map(child => 0);
 	const [heights, setHeights] = useState<Array<number>>(pheights);
@@ -232,13 +233,38 @@ const Services = ({services, children}: ServicesProps): React.ReactElement => {
 		}),
 	}
 
+	const keyDown = (e: KeyboardEvent) => {
+		if (!servicesSelectRef.current)
+			return;
+		if (e.code == "ArrowDown"){
+			e.preventDefault();
+			let selectedChild: number = 0;
+			[...servicesSelectRef.current.children].forEach((child: HTMLDivElement, idx: number) => {
+				if (child.children[0].id == document.activeElement.id)
+					selectedChild = idx;
+			})
+			servicesSelectRef.current.children[(selectedChild+1) % services.length].children[0].focus();
+		} if (e.code == "ArrowUp"){
+			e.preventDefault();
+			let selectedChild: number = 0;
+			[...servicesSelectRef.current.children].forEach((child: HTMLDivElement, idx: number) => {
+				if (child.children[0].id == document.activeElement.id)
+					selectedChild = idx;
+			})
+			servicesSelectRef.current.children[(services.length+selectedChild-1) % services.length].children[0].focus();
+		}
+	}
+
 	return (
 		<div className={styles.servicesCard}>
 			<div className={[styles.dropDown, styles.animatedMaxHeight].join(" ")}>
-				<h1 style={{color: "#fff"}}>Our Services</h1>
+				<h1 style={{color: "#fff"}} id="servicesLabel">Our Services</h1>
 			</div>
+
 			<div className={styles.servicesBody}>
-				<div className={[styles.servicesSelect, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight+2*remSize} : {maxHeight: 0}}>
+				<div className={[styles.servicesSelect, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight+2*remSize} : {maxHeight: 0}}
+					role="tablist" ariaLabelledBy="servicesLabel" ariaOrientation="vertical" tabIndex={0} ref={servicesSelectRef} onKeyDown={keyDown}
+				>
 					{services.map((service: string, idx: number) => (
 						<div className={styles.serviceOptionWrapper} key={idx}>
 							<Link
@@ -246,6 +272,11 @@ const Services = ({services, children}: ServicesProps): React.ReactElement => {
 								style={selected == idx ? {backgroundColor: '#4977bb', textDecoration: 'none'} : {textDecoration: 'none'}}
 								onClick={() => scrollTo(idx)}
 								href={"/?service=" + getServiceSlug(idx)} shallow replace scroll={false}
+								role="tab"
+								ariaSelected={selected == idx}
+								ariaControls={"tab" + idx}
+								id={"tabLabel" + idx}
+								tabIndex={selected == idx ? 0 : -1}
 							>
 								<h1 style={{color: selected == idx ? '#fff' : '#000', fontSize: '1.5rem'}}>{service.toUpperCase()}</h1>
 							</Link>
@@ -254,17 +285,16 @@ const Services = ({services, children}: ServicesProps): React.ReactElement => {
 					))}
 				</div>
 
-				<div className={[styles.infoParent, styles.animatedMaxHeight].join(" ")} style={canShow ?
-						{maxHeight: maxHeight+2*remSize, minHeight: maxHeight+2*remSize} : {maxHeight: 0}}>
+				<div className={[styles.infoParent, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight+2*remSize, minHeight: maxHeight+2*remSize} : {maxHeight: 0}}>
 					{calculateSize ? children.map((child: React.ReactNode, idx: number) => (
-							<div className={styles.servicesInfo} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)} key={idx}>
+							<div className={styles.servicesInfo} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)} key={idx} ariaHidden="true">
 								{child}
 							</div>
 					)) : (
 					<AnimatePresence initial={false} custom={direction}>
 						{children.map((child, idx) => idx == selected && (
-							<motion.div className={styles.servicesInfo} key={idx} style={{position: 'absolute', minHeight: maxHeight+2*remSize, minWidth: width}}
-								variants={variants} custom={direction} initial="initial" animate="target" exit="exit" transition={longTransition}
+							<motion.div className={styles.servicesInfo} key={idx} style={{position: 'absolute', minHeight: maxHeight+2*remSize, minWidth: width}} variants={variants} custom={direction}
+								initial="initial" animate="target" exit="exit" transition={longTransition} role="tabpanel" id={"tab" + idx} ariaLabelledBy={"tabLabel" + idx} tabIndex={0}
 							>
 								{child}
 							</motion.div>

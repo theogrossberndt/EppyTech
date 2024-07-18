@@ -112,7 +112,7 @@
 	position: relative;
 }
 
-.scrollButtons {
+.iconButton {
 	color: #fff;
 	width: 2rem;
 	height: 2rem;
@@ -125,6 +125,13 @@
 	background: none;
 	margin-left: 1rem;
 	font-weight: normal;
+}
+
+.textLine {
+	color: #fff;
+	padding-block: 0.5rem;
+	line-height: 1rem;
+	font-size: 1.5rem;
 }
 
 @media (prefers-reduced-motion) {

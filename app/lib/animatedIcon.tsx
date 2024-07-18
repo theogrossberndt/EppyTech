@@ -1,12 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion';
 
-type AnimatedIconProps = {
-	children: Array<React.ReactNode>;
-	style?: React.CSSProperties;
+interface AnimatedIconProps extends React.ComponentPropsWithoutRef<"div"> {
 	selected: number;
 }
 
-const AnimatedIcon = ({children, style, selected}: AnimatedIconProps) => {
+const AnimatedIcon = ({selected, ...divProps}: AnimatedIconProps) => {
 	const transition={duration: 0.5, ease: [0.65, 0, 0.35, 1]};
 
 	const animate = {
@@ -28,15 +26,15 @@ const AnimatedIcon = ({children, style, selected}: AnimatedIconProps) => {
 	}
 
 	return (
-		<div style={{position: 'relative', ...style}}>
+		<div {...divProps} style={{...divProps.style, position: 'relative'}}>
 			<AnimatePresence initial={false}>
 				{selected == 0 ? (
 					<motion.div animate={animate} initial={inOut1} exit={inOut1} key={0} style={{position: 'absolute'}}>
-						{children[0] ?? <div/>}
+						{divProps.children[0] ?? <div/>}
 					</motion.div>
 					) : (
 					<motion.div animate={animate} initial={inOut2} exit={inOut2} key={1} style={{position: 'absolute'}}>
-						{children[1] ?? <div/>}
+						{divProps.children[1] ?? <div/>}
 					</motion.div>
 				)}
 			</AnimatePresence>

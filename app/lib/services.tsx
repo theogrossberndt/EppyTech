@@ -182,14 +182,14 @@ const Services = ({services, children}: ServicesProps): React.ReactElement => {
 								<motion.div key={idx} style={{position: 'absolute', minHeight: '2rem'}}
 									variants={headerScrollVariants} custom={direction} initial="initial" animate="target" exit="exit" transition={longTransition}
 								>
-									<h3 style={{color: "#fff", paddingBlock: '0.5rem', lineHeight: '1rem', fontSize: '1.5rem'}} key={idx}>{service.toUpperCase()}</h3>
+									<h3 className={styles.textLine} key={idx}>{service.toUpperCase()}</h3>
 								</motion.div>
 							))}
 						</AnimatePresence>
 					</div>
-					<AnimatedIcon selected={mobileMenuOpen ? 1 : 0} style={{width: '2rem', height: '2rem'}} aria-hidden="true">
-						<FontAwesomeIcon icon={faBars} style={{width: '2rem', height: '2rem', backgroundColor: '#4977bb', color: "#fff"}}/>
-						<FontAwesomeIcon icon={faCaretDown} style={{width: '2rem', height: '2rem', backgroundColor: '#4977bb', color: "#fff"}}/>
+					<AnimatedIcon selected={mobileMenuOpen ? 1 : 0} className={styles.iconButton} aria-hidden="true">
+						<FontAwesomeIcon icon={faBars} className={styles.iconButton}/>
+						<FontAwesomeIcon icon={faCaretDown} className={styles.iconButton}/>
 					</AnimatedIcon>
 				</button>
 				<AnimatePresence>
@@ -230,15 +230,15 @@ const Services = ({services, children}: ServicesProps): React.ReactElement => {
 					)}
 				</div>
 				<div className={styles.dropDown}>
-					<h1 style={{color: '#fff', paddingBlock: '0.5rem', lineHeight: '1rem'}} id="servicesLabel">Our Services</h1>
+					<h1 className={styles.textLine} id="servicesLabel">Our Services</h1>
 					<div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
 						<ConditionallyClickableLink onClick={selected != 0 ? () => scrollTo(selected-1) : undefined} className={styles.scrollButtonHolder}
 							href={selected != 0 ? "/?service=" + getServiceSlug(selected-1) : null} scroll={false} replace shallow aria-label="View previous service">
-							<FontAwesomeIcon icon={faArrowUp} style={selected == 0 ? {color: '#ccc', cursor: 'default'} : {}} className={styles.scrollButtons} aria-hidden="true"/>
+							<FontAwesomeIcon icon={faArrowUp} style={selected == 0 ? {color: '#ccc', cursor: 'default'} : {}} className={styles.iconButton} aria-hidden="true"/>
 						</ConditionallyClickableLink>
 						<ConditionallyClickableLink onClick={selected != services.length-1 ? () => scrollTo(selected+1) : undefined} className={styles.scrollButtonHolder}
 							href={selected != services.length-1 ? "/?service=" + getServiceSlug(selected+1) : null} scroll={false} replace shallow aria-label="View next service">
-							<FontAwesomeIcon icon={faArrowDown} style={selected == services.length-1 ? {color: '#ccc', cursor: 'default'}: {}} className={styles.scrollButtons} aria-hidden="true"/>
+							<FontAwesomeIcon icon={faArrowDown} style={selected == services.length-1 ? {color: '#ccc', cursor: 'default'}: {}} className={styles.iconButton} aria-hidden="true"/>
 						</ConditionallyClickableLink>
 					</div>
 				</div>

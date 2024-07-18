@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useContext, useEffect, useMemo, useState, useRef } from 'react';
+import { useContext, useEffect, useMemo, useState, useRef } from 'react';
 import Link from 'next/link';
 import debounce from 'lodash.debounce';
 import styles from "./services.module.css";
@@ -41,6 +41,7 @@ const Services = ({services, children}: ServicesProps): React.ReactElement => {
 
 	const headerTextRef = useRef<HTMLButtonElement>(null);
 	const servicesSelectRef = useRef<HTMLDivElement>(null);
+	const mobileSelectRef = useRef<HTMLDivElement>(null);
 
 	const pheights: Array<number> = children.map(child => 0);
 	const [heights, setHeights] = useState<Array<number>>(pheights);
@@ -148,35 +149,62 @@ const Services = ({services, children}: ServicesProps): React.ReactElement => {
 			}),
 		}
 
+		const mobileKeyDown = (e: KeyboardEvent) => {
+			if (!mobileSelectRef.current)
+				return;
+			if (e.code == "ArrowDown"){
+				e.preventDefault();
+				let selectedChild: number = 0;
+				[...mobileSelectRef.current.children].forEach((child: HTMLElement, idx: number) => {
+					if (child.id == document.activeElement.id)
+						selectedChild = idx;
+				})
+				mobileSelectRef.current.children[(selectedChild+1) % services.length].focus();
+			} if (e.code == "ArrowUp"){
+				e.preventDefault();
+				let selectedChild: number = 0;
+				[...mobileSelectRef.current.children].forEach((child: HTMLElement, idx: number) => {
+					if (child.id == document.activeElement.id)
+						selectedChild = idx;
+				})
+				mobileSelectRef.current.children[(services.length+selectedChild-1) % services.length].focus();
+			}
+		}
+
 		return (
-			<div className={styles.servicesCard}>
-				<button className={styles.dropDown} onClick={() => setMobileMenuOpen(isMenuOpen => !isMenuOpen)} ref={headerTextRef} style={{overflow: 'hidden', position: 'relative', cursor: 'pointer'}}>
-					<div style={{height: '2rem'}}>
+			<section className={styles.servicesCard} aria-labelledby="servicesLabel">
+				<button className={styles.dropDown} onClick={() => setMobileMenuOpen(isMenuOpen => !isMenuOpen)} ref={headerTextRef} style={{overflow: 'hidden', position: 'relative', cursor: 'pointer'}}
+					aria-expanded={mobileMenuOpen} aria-controls="servicesMenu" aria-haspopup="true" id="servicesMenuButton" aria-label={mobileMenuOpen ? "Close services menu" : "Open services menu"}
+				>
+					<div style={{height: '2rem'}} aria-hidden="true">
 						<AnimatePresence initial={false} custom={direction}>
 							{services.map((service, idx) => idx == selected && (
 								<motion.div key={idx} style={{position: 'absolute', minHeight: '2rem'}}
 									variants={headerScrollVariants} custom={direction} initial="initial" animate="target" exit="exit" transition={longTransition}
 								>
-									<h1 style={{color: "#fff", paddingBlock: '0.5rem', lineHeight: '1rem'}} key={idx}>{service.toUpperCase()}</h1>
+									<h3 style={{color: "#fff", paddingBlock: '0.5rem', lineHeight: '1rem', fontSize: '1.5rem'}} key={idx}>{service.toUpperCase()}</h3>
 								</motion.div>
 							))}
 						</AnimatePresence>
 					</div>
-					<AnimatedIcon selected={mobileMenuOpen ? 1 : 0} style={{width: '2rem', height: '2rem'}}>
+					<AnimatedIcon selected={mobileMenuOpen ? 1 : 0} style={{width: '2rem', height: '2rem'}} aria-hidden="true">
 						<FontAwesomeIcon icon={faBars} style={{width: '2rem', height: '2rem', backgroundColor: '#4977bb', color: "#fff"}}/>
 						<FontAwesomeIcon icon={faCaretDown} style={{width: '2rem', height: '2rem', backgroundColor: '#4977bb', color: "#fff"}}/>
 					</AnimatedIcon>
 				</button>
 				<AnimatePresence>
 					{mobileMenuOpen && (
-						<motion.div animate={{height: 'auto', opacity: 1}} initial={{height: 0, opacity: 0}} exit={{height: 0, opacity: 0}} style={{overflow: 'hidden'}} transition={transition}>
+						<motion.div animate={{height: 'auto', opacity: 1}} initial={{height: 0, opacity: 0}} exit={{height: 0, opacity: 0}} style={{overflow: 'hidden'}} transition={transition} role="tablist"
+							aria-label="Services tabs" aria-orientation="vertical" tabIndex={0} id="servicesMenu" onKeyDown={mobileKeyDown} ref={mobileSelectRef}
+						>
 							{services.map((service: string, idx: number) => (
 								<Link className={[styles.dropDown, styles.darken].join(" ")} key={idx} style={idx == selected ? {backgroundColor: '#4977bb'}: {color: '#000'}}
 									href={"/?service=" + getServiceSlug(idx)} scroll={false} replace shallow
 									onClick={() => {
 										setMobileMenuOpen(false);
 										scrollTo(idx);
-									}}>
+									}}
+									role="tab" aria-selected={idx == selected} aria-controls={"mobileTab" + idx} id={"mobileTabLabel" + idx} tabIndex={selected == idx ? 0 : -1}>
 										{service}
 								</Link>
 							))}
@@ -185,34 +213,36 @@ const Services = ({services, children}: ServicesProps): React.ReactElement => {
 				</AnimatePresence>
 				<div className={[styles.infoParent, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: heights[selected], minHeight: heights[selected], position: 'relative'} : {maxHeight: 0}}>
 					{calculateSize ? children.map((child, idx) => (
-						<div className={styles.servicesInfo} key={idx} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)}>
+						<div className={styles.servicesInfo} key={idx} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)} aria-hidden="true">
 							{child}
 						</div>
-					)) : (<AnimatePresence initial={false} custom={direction}>
-						{children.map((child, idx) => idx == selected && (
-							<motion.div className={styles.servicesInfo} key={idx} style={{position: 'absolute', minHeight: heights[idx]}}
-								variants={scrollVariants} custom={direction} initial="initial" animate="target" exit="exit" transition={longTransition}
-							>
-								{child}
-							</motion.div>
-						))}
-					</AnimatePresence>)
-					}
+					)) : (
+						<AnimatePresence initial={false} custom={direction}>
+							{children.map((child, idx) => idx == selected && (
+								<motion.div className={styles.servicesInfo} key={idx} style={{position: 'absolute', minHeight: heights[idx]}}
+									variants={scrollVariants} custom={direction} initial="initial" animate="target" exit="exit" transition={longTransition}
+									role="tabpanel" id={"mobileTab" + idx} aria-label={services[idx]} tabIndex={0} aria-hidden={idx == selected}
+								>
+									{child}
+								</motion.div>
+							))}
+						</AnimatePresence>
+					)}
 				</div>
 				<div className={styles.dropDown}>
-					<h1 style={{color: '#fff', paddingBlock: '0.5rem', lineHeight: '1rem'}}>Our Services</h1>
+					<h1 style={{color: '#fff', paddingBlock: '0.5rem', lineHeight: '1rem'}} id="servicesLabel">Our Services</h1>
 					<div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
 						<ConditionallyClickableLink onClick={selected != 0 ? () => scrollTo(selected-1) : undefined} className={styles.scrollButtonHolder}
-							href={selected != 0 ? "/?service=" + getServiceSlug(selected-1) : null} scroll={false} replace shallow>
-							<FontAwesomeIcon icon={faArrowUp} style={selected == 0 ? {color: '#ccc', cursor: 'default'} : {}} className={styles.scrollButtons}/>
+							href={selected != 0 ? "/?service=" + getServiceSlug(selected-1) : null} scroll={false} replace shallow aria-label="View previous service">
+							<FontAwesomeIcon icon={faArrowUp} style={selected == 0 ? {color: '#ccc', cursor: 'default'} : {}} className={styles.scrollButtons} aria-hidden="true"/>
 						</ConditionallyClickableLink>
 						<ConditionallyClickableLink onClick={selected != services.length-1 ? () => scrollTo(selected+1) : undefined} className={styles.scrollButtonHolder}
-							href={selected != services.length-1 ? "/?service=" + getServiceSlug(selected+1) : null} scroll={false} replace shallow>
-							<FontAwesomeIcon icon={faArrowDown} style={selected == services.length-1 ? {color: '#ccc', cursor: 'default'}: {}} className={styles.scrollButtons}/>
+							href={selected != services.length-1 ? "/?service=" + getServiceSlug(selected+1) : null} scroll={false} replace shallow aria-label="View next service">
+							<FontAwesomeIcon icon={faArrowDown} style={selected == services.length-1 ? {color: '#ccc', cursor: 'default'}: {}} className={styles.scrollButtons} aria-hidden="true"/>
 						</ConditionallyClickableLink>
 					</div>
 				</div>
-			</div>
+			</section>
 		);
 	}
 
@@ -263,7 +293,7 @@ const Services = ({services, children}: ServicesProps): React.ReactElement => {
 
 			<div className={styles.servicesBody}>
 				<div className={[styles.servicesSelect, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight+2*remSize} : {maxHeight: 0}}
-					role="tablist" ariaLabelledBy="servicesLabel" ariaOrientation="vertical" tabIndex={0} ref={servicesSelectRef} onKeyDown={keyDown}
+					role="tablist" aria-labelledBy="servicesLabel" aria-orientation="vertical" tabIndex={0} ref={servicesSelectRef} onKeyDown={keyDown}
 				>
 					{services.map((service: string, idx: number) => (
 						<div className={styles.serviceOptionWrapper} key={idx}>
@@ -273,12 +303,12 @@ const Services = ({services, children}: ServicesProps): React.ReactElement => {
 								onClick={() => scrollTo(idx)}
 								href={"/?service=" + getServiceSlug(idx)} shallow replace scroll={false}
 								role="tab"
-								ariaSelected={selected == idx}
-								ariaControls={"tab" + idx}
+								aria-selected={selected == idx}
+								aria-controls={"tab" + idx}
 								id={"tabLabel" + idx}
 								tabIndex={selected == idx ? 0 : -1}
 							>
-								<h1 style={{color: selected == idx ? '#fff' : '#000', fontSize: '1.5rem'}}>{service.toUpperCase()}</h1>
+								<span style={{color: selected == idx ? '#fff' : '#000', fontSize: '1.5rem'}}>{service.toUpperCase()}</span>
 							</Link>
 							<div className={styles.flag} style={selected == idx ? {backgroundColor: '#7AB4EA'} : {}}></div>
 						</div>
@@ -287,14 +317,14 @@ const Services = ({services, children}: ServicesProps): React.ReactElement => {
 
 				<div className={[styles.infoParent, styles.animatedMaxHeight].join(" ")} style={canShow ? {maxHeight: maxHeight+2*remSize, minHeight: maxHeight+2*remSize} : {maxHeight: 0}}>
 					{calculateSize ? children.map((child: React.ReactNode, idx: number) => (
-							<div className={styles.servicesInfo} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)} key={idx} ariaHidden="true">
+							<div className={styles.servicesInfo} ref={(element: HTMLDivElement | null) => onElementChanged(element, idx)} key={idx} aria-hidden="true">
 								{child}
 							</div>
 					)) : (
 					<AnimatePresence initial={false} custom={direction}>
 						{children.map((child, idx) => idx == selected && (
 							<motion.div className={styles.servicesInfo} key={idx} style={{position: 'absolute', minHeight: maxHeight+2*remSize, minWidth: width}} variants={variants} custom={direction}
-								initial="initial" animate="target" exit="exit" transition={longTransition} role="tabpanel" id={"tab" + idx} ariaLabelledBy={"tabLabel" + idx} tabIndex={0}
+								initial="initial" animate="target" exit="exit" transition={longTransition} role="tabpanel" id={"tab" + idx} aria-labelledBy={"tabLabel" + idx} tabIndex={0}
 							>
 								{child}
 							</motion.div>

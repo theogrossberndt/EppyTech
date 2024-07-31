@@ -76,7 +76,7 @@ export function slugToIdx(slug: string): number{
 
 export function ManagedServices(): React.ReactElement {
 	return (
-		<div>
+		<article>
 			<h2>Managed Services: A Complete Solution For Small Businesses</h2>
 			<br/>
 			<p>
@@ -103,13 +103,13 @@ export function ManagedServices(): React.ReactElement {
 				With us as your Connecticut managed services provider, you’ll get on-demand access to locally-based experts and big-business managed IT services at small-business prices. 
 				With our flexible managed services programs, your IT and your budget planning become easier, allowing you to focus efforts on locating new sources of revenue.
 			</p>
-		</div>
+		</article>
 	);
 }
 
 export function HelpDesk(): React.ReactElement {
 	return (
-		<div>
+		<article>
 			<h2>Expert Technical Support Plans: The Computer Help You Need</h2>
 			<br/>
 			<p>
@@ -141,13 +141,13 @@ export function HelpDesk(): React.ReactElement {
 				Building a technical support department requires more time, money, and resources than most Connecticut businesses can justify. 
 				With our computer support plans, you’ll get better, more cost-effective service – and have access to a whole team of technical support experts just by picking up the phone.
 			</p>
-		</div>
+		</article>
 	);
 }
 
 export function DataProtection(): React.ReactElement {
 	return (
-		<div>
+		<article>
 			<h2>Could Your Company Endure the Loss of Its Critical Data?</h2>
 			<br/>
 			<p>
@@ -175,13 +175,13 @@ export function DataProtection(): React.ReactElement {
 			</p>
 			<br/>
 			<p>Without access to essential information, would you be able to make contact with customers and vendors and continue to run your business? How long would your company get by?</p>
-		</div>
+		</article>
 	);
 }
 
 export function CloudComputing(): React.ReactElement {
 	return (
-		<div>
+		<article>
 			<h2>Hosted &amp; Cloud Services, Handled By the Pros</h2>
 			<br/>
 			<p>
@@ -208,13 +208,13 @@ export function CloudComputing(): React.ReactElement {
 			</p>
 			<br/>
 			<p>We offer secure, dependable, high-performance hosting and cloud services at low monthly rates, giving you the time and freedom to concentrate on your business objectives instead of your IT infrastructure.</p>
-		</div>
+		</article>
 	);
 }
 
 export function PhoneSystems(): React.ReactElement {
 	return(
-		<div>
+		<article>
 			<h2>VoIP: A Better Choice for Business Communication</h2><br/>
 			<p>
 				What’s VoIP? VoIP, or Voice-over-IP (Internet-Protocol), is a better and more affordable way for businesses to communicate. 
@@ -241,13 +241,13 @@ export function PhoneSystems(): React.ReactElement {
 				If you have a traveling workforce, your employees will be able to make calls and access your phone system from around the world, increasing flexibility and productivity. 
 				In addition, VoIP systems allow you to scale up or down as your business needs change.
 			</p>
-		</div>
+		</article>
 	);
 }
 
 export function BusinessITSupport(): React.ReactElement {
 	return (
-		<div>
+		<article>
 			<h2>Business IT Support: The Economical, Sensible Solution</h2><br/>
 			<p>
 				Tired of IT-related roadblocks? Find yourself in unfamiliar technical terrain? Want to give your overworked IT employees a break? 
@@ -274,13 +274,13 @@ export function BusinessITSupport(): React.ReactElement {
 				In most instances, our technicians can work with you over the phone to answer questions and, through remote access to your system, solve irritating technical problems. 
 				If hands-on tech support is required, Eppy Tech professionals will be dispatched to your business to deal with any issues and reduce downtime.
 			</p>
-		</div>
+		</article>
 	);
 }
 
 export function RepairServices(): React.ReactElement {
 	return (
-		<div>
+		<article>
 			<p>Eppy Tech is a complete break-fix shop with expertise in laptop, desktop and printer repair.</p>
 			<br/>
 			<p>Office Hours:</p>
@@ -298,6 +298,6 @@ export function RepairServices(): React.ReactElement {
 				<li>In-home service</li>
 				<li>Walk-in flat fee service</li>
 			</ul>
-		</div>
+		</article>
 	);
 }

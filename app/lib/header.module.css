@@ -12,8 +12,9 @@
 
 .banner {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	align-items: center;
+	justify-content: center;
 	width: 100%;
 	background: #4977BB;
 	color: #fff;

@@ -1,8 +1,10 @@
 "use client"
 
+import Link from 'next/link';
 import { useContext, useEffect, useRef, useState, FormEvent, ReactElement } from 'react';
 import styles from "./page.module.css";
 import Header from "@/app/lib/header.tsx";
+import Footer from "@/app/lib/footer.tsx";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
@@ -82,7 +84,7 @@ export default function ContactPage(){
 					{errors[key] && errors[key].map((err, idx) => (
 						<motion.div key={idx} animate={{height: 'auto'}} initial={{height: 0}} exit={{height: 0}} style={{overflow: 'hidden'}}>
 							<div className={styles.errorMsg}>
-								<FontAwesomeIcon icon={faCircleExclamation} style={{width: '1rem', height: '1rem', paddingRight: '0.5rem'}}/>
+								<FontAwesomeIcon icon={faCircleExclamation} style={{width: '1rem', height: '1rem', paddingRight: '0.5rem'}} ariaHidden="true"/>
 								{err}
 							</div>
 						</motion.div>
@@ -140,7 +142,7 @@ export default function ContactPage(){
 								</div>
 								{formField("Please provide a brief description of your concern or need.", "text", "message")}
 								<motion.input animate={defaultWidth > 0 ? {width: formState == 0 ? defaultWidth : 2*defaultWidth} : {}}
-									type="submit" value={formState == 0 ? "SUBMIT" : "SUBMITTING"} className={styles.button}
+									type="submit" value={formState == 0 ? "SUBMIT" : "SUBMITTING"} className={styles.button} disabled={formState != 0}
 									ref={el => {
 										if (el)
 											setDefaultWidth(el.offsetWidth);
@@ -155,14 +157,13 @@ export default function ContactPage(){
 									if (formRef.current)
 										formRef.current.reset();
 								}}>
-									<RoundedButton onClick={() => setFormState(0)}>
-										<FontAwesomeIcon icon={faChevronLeft} style={{width: '1rem', height: '1rem'}}/>
+									<RoundedButton onClick={() => setFormState(0)} ariaLabel="Return">
+										<FontAwesomeIcon icon={faChevronLeft} style={{width: '1rem', height: '1rem'}} ariaHidden="true"/>
 									</RoundedButton>
 									<div>
-										<div className={styles.overlayDiv} style={{filter: 'blur(16px)', opacity: 0.5}}>
+										<div className={styles.overlayDiv} style={{filter: 'blur(16px)', opacity: 0.5}} ariaHidden="true">
 											<ExportedImage
 												src={logoImageStatic}
-												alt="Eppy Tech Building"
 												width={400}
 												height={400}
 												priority
@@ -172,7 +173,7 @@ export default function ContactPage(){
 											<h3>
 											Thank you!  Your information has been submitted. A member of our team will be in touch.
 											</h3>
-											<button className={styles.button} onClick={() => setFormState(0)} style={{marginTop: '1rem'}}>Submit Another Form</button>
+											<button className={styles.button} onClick={() => setFormState(0)} style={{marginTop: '1rem'}}>Return</button>
 										</div>
 									</div>
 								</motion.div>
@@ -180,19 +181,20 @@ export default function ContactPage(){
 						</AnimatePresence>
 					</div>
 				</div>
-				<div style={{}}>
+				<div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
 					<h3>Eppy Tech</h3>
 					100 Heights Road
 					<br/>
 					Darient, CT 06820
 					<br/><br/>
 					<h3>Phone:</h3>
-					<h3>(203) 655-5177</h3>
+					<Link href="tel:203-655-5177">(203) 655-5177</Link>
 					<br/>
 					<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3007.985761971037!2d-73.49853742331341!3d41.06930387134207!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c2a05b365b12ef%3A0xb14fe1975dc0f6d3!2sEppy%20Tech!5e0!3m2!1sen!2sus!4v1710969744321!5m2!1sen!2sus"
 						style={{border:0}} width='400' height='400' allowFullScreen={false} loading="lazy" referrerPolicy="no-referrer-when-downgrade"/>
 				</div>
 			</main>
+			<Footer/>
 		</div>
 	);
 }

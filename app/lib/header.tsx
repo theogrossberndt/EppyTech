@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -67,7 +68,7 @@ const Header = ({selectedPage}: HeaderProps): React.ReactElement => {
 	return (
 		<header className={styles.header} role="banner">
 			<div className={styles.banner}>
-				Call (203) 655-5177 for an appointment · Monday - Friday 8:30 am to 5:30 pm
+				Call &nbsp;<Link href="tel:203-655-5177" style={{color: 'white'}}>(203) 655-5177</Link>&nbsp; for an appointment · Monday - Friday 8:30 am to 5:30 pm
 			</div>
 			{context.isMobile ? (
 				<Fragment>

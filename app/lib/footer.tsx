@@ -25,15 +25,15 @@ const Footer = (): React.ReactElement => {
 				<div>
 					<div className={styles.textLine}>
 						<FontAwesomeIcon icon={faLocationDot} style={{width: '1.5rem', height: '1.5rem', color: '#4977bb', ariaLabel: "Location"}}/>
-						100 Heights Road, Darien CT, 06820
+						<Link className={styles.link} href="http://maps.apple.com/?q=Eppy+Tech">100 Heights Road, Darien CT, 06820</Link>
 					</div>
 					<div className={styles.textLine}>
 						<FontAwesomeIcon icon={faPhone} style={{width: '1.5rem', height: '1.5rem', color: '#4977bb', ariaLabel: "Phone number"}}/>
-						(203) 655-5177
+						<Link className={styles.link} href="tel:203-655-5177">(203) 655-5177</Link>
 					</div>
 					<div className={styles.textLine}>
 						<FontAwesomeIcon icon={faEnvelope} style={{width: '1.5rem', height: '1.5rem', color: '#4977bb', ariaLabel: "Email"}}/>
-						support@eppytech.com
+						<Link className={styles.link} href="mailto:support@eppytech.com">support@eppytech.com</Link>
 					</div>
 				</div>
 				<div className={styles.linkList}>

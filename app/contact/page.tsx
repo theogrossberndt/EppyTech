@@ -13,6 +13,7 @@ import RoundedButton from "@/app/lib/roundedButton.tsx";
 import emailjs from '@emailjs/browser';
 import ExportedImage from "next-image-export-optimizer";
 import logoImageStatic from "/public/images/logoCropped.jpg";
+import ReCAPTCHA from 'react-google-recaptcha';
 
 import {ContextProvider} from "@/app/appProvider.tsx";
 
@@ -25,6 +26,8 @@ export default function ContactPage(){
 	const nameToReadable: {[key: string]: string} = {fname: "first name", lname: "last name", email: "email", phone: "phone number", message: "message"};
 
 	const context = useContext(ContextProvider);
+
+	const captchaRef = useRef();
 
 	const onSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -47,15 +50,23 @@ export default function ContactPage(){
 		setErrors(newErrors);
 		if (Object.keys(newErrors).length == 0){
 			setFormState(1);
-			wait()
-//			emailjs.sendForm("service_6omc8df","template_2e6g0zv", formRef.current, {publicKey: "lDCeJnFwBEYnQGVHD"})
-				.then(
-					() => setFormState(2),
-					(error) => {
-						console.log(error);
-						setErrors({form: ["The form could not be submitted. Please email admin@eppytech.com manually and mention this error.", error]});
-						setFormState(0);
-					});
+			console.log(captchaRef.current?.executeAsync);
+			captchaRef.current?.executeAsync().then((token) => {
+				console.log(formRef.current, token);
+				wait()
+//				emailjs.sendForm("service_6omc8df","template_2e6g0zv", formRef.current, {publicKey: "lDCeJnFwBEYnQGVHD"}, )
+					.then(
+						() => setFormState(2),
+						(error) => {
+							console.log(error);
+							setErrors({form: ["The form could not be submitted. Please email support@eppytech.com with your information and mention this error.", error]});
+							setFormState(0);
+						});
+			}, (error) => {
+				console.log(error);
+				setErrors({form: ["There was an error with reCAPTCHA. Please email support@eppytech.com with your information and mention this error.", error]});
+				setFormState(0);
+			});
 		}
 	}
 
@@ -84,7 +95,7 @@ export default function ContactPage(){
 					{errors[key] && errors[key].map((err, idx) => (
 						<motion.div key={idx} animate={{height: 'auto'}} initial={{height: 0}} exit={{height: 0}} style={{overflow: 'hidden'}}>
 							<div className={styles.errorMsg}>
-								<FontAwesomeIcon icon={faCircleExclamation} style={{width: '1rem', height: '1rem', paddingRight: '0.5rem'}} ariaHidden="true"/>
+								<FontAwesomeIcon icon={faCircleExclamation} style={{width: '1rem', height: '1rem', paddingRight: '0.5rem'}} ariahidden="true"/>
 								{err}
 							</div>
 						</motion.div>
@@ -106,7 +117,7 @@ export default function ContactPage(){
 					<br/>
 					<p>Fill out the form to receive a free consultation and learn how we can help make your technology worry-free!</p>
 					<div className={styles.formCard}>
-						<form className={styles.form} onSubmit={onSubmit} ref={formRef}>
+						<form className={styles.form} onSubmit={onSubmit} ref={formRef} autoComplete="on">
 							<fieldset disabled={formState != 0}>
 								<AnimatePresence>
 									{errors['form'] && errors['form'].map((err, idx) => (
@@ -141,12 +152,29 @@ export default function ContactPage(){
 									(required)
 								</div>
 								{formField("Please provide a brief description of your concern or need.", "text", "message")}
-								<motion.input animate={defaultWidth > 0 ? {width: formState == 0 ? defaultWidth : 2*defaultWidth} : {}}
-									type="submit" value={formState == 0 ? "SUBMIT" : "SUBMITTING"} className={styles.button} disabled={formState != 0}
-									ref={el => {
-										if (el)
-											setDefaultWidth(el.offsetWidth);
-									}}/>
+								<div style={{display: 'flex'}}>
+									<motion.div className={styles.button} layout style={{borderRadius: 50, padding: 0, overflow: 'hidden'}} transition={{duration: 0.5}} disabled={formState != 0}>
+										{formState == 0 ? (
+											<motion.input layout className={styles.button} style={{margin: 0, boxShadow: 'none', fontFamily: 'inherit'}}
+												type="submit" value="SUBMIT" disabled={formState != 0} key="0"/>
+										) : (
+											<motion.div layout style={{padding: '1rem', display: 'flex', flexDirection: 'row'}}>
+												<div ref={el => {
+													if (el)
+														setDefaultWidth(el.offsetHeight);
+												}}>SUBMITTING</div>
+												<motion.div className={styles.loader} animate={{rotate: 360}} transition={{repeat: Infinity, duration: 1}} style={{height: defaultWidth, width: defaultWidth}}>
+												</motion.div>
+											</motion.div>
+										)}
+									</motion.div>
+								</div>
+									<ReCAPTCHA
+										ref={captchaRef}
+										size="invisible"
+										sitekey="6LcfmxwqAAAAAOnvSZd-1-wNNw3vPGslu1OdLHal"
+										badge="inline"
+									/>
 							</fieldset>
 						</form>
 						<AnimatePresence>
@@ -157,11 +185,11 @@ export default function ContactPage(){
 									if (formRef.current)
 										formRef.current.reset();
 								}}>
-									<RoundedButton onClick={() => setFormState(0)} ariaLabel="Return">
-										<FontAwesomeIcon icon={faChevronLeft} style={{width: '1rem', height: '1rem'}} ariaHidden="true"/>
+									<RoundedButton onClick={() => setFormState(0)} arialabel="Return">
+										<FontAwesomeIcon icon={faChevronLeft} style={{width: '1rem', height: '1rem'}} ariahidden="true"/>
 									</RoundedButton>
 									<div>
-										<div className={styles.overlayDiv} style={{filter: 'blur(16px)', opacity: 0.5}} ariaHidden="true">
+										<div className={styles.overlayDiv} style={{filter: 'blur(16px)', opacity: 0.5}} ariahidden="true">
 											<ExportedImage
 												src={logoImageStatic}
 												width={400}

@@ -9,6 +9,7 @@ import roundedStyles from "@/app/lib/roundedButton.module.css";
 import Header from "@/app/lib/header.tsx";
 import Footer from "@/app/lib/footer.tsx";
 import Services from "@/app/lib/services.tsx";
+import ConditionallyClickableLink from '@/app/lib/conditionallyClickableLink.tsx';
 import { ManagedServices, HelpDesk, DataProtection, CloudComputing, PhoneSystems, BusinessITSupport, RepairServices } from "@/app/lib/tabs.tsx";
 
 import {ContextProvider} from "@/app/appProvider.tsx";
@@ -37,7 +38,7 @@ export default function Home() {
 								sizes="(max-width: 1024px) 100vw, 50vw"
 							/>
 							{context.isMobile && (
-								<ConditionallyClickableLink href="/contact" className={[roundedStyles.roundedButton, styles.consultationButton].join(" ")}>
+								<ConditionallyClickableLink href="/contact" className={styles.consultationButton}>
 									FREE CONSULTATION
 								</ConditionallyClickableLink>
 							)}

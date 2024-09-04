@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Dancing_Script } from "next/font/google";
+import { Maven_Pro } from "next/font/google";
 import "./globals.css";
 import AppProvider from "@/app/appProvider.tsx";
 
-const inter = Dancing_Script({ subsets: ["latin"] });
+//const inter = Dancing_Script({ subsets: ["latin"] });
+const inter = Maven_Pro({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Eppy Tech",

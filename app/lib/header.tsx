@@ -68,7 +68,7 @@ const Header = ({selectedPage}: HeaderProps): React.ReactElement => {
 	return (
 		<header className={styles.header} role="banner">
 			<div className={styles.banner}>
-				Call &nbsp;<Link href="tel:203-655-5177" style={{color: 'white'}}>(203) 655-5177</Link>&nbsp; for an appointment · Monday - Friday 8:30 am to 5:30 pm
+				Call &nbsp;<Link href="tel:203-655-5177" style={{color: 'white', fontWeight: 'bold'}}>(203) 655-5177</Link>&nbsp; for an appointment · Monday - Friday &nbsp; <strong>8:30 am to 5:30 pm</strong>
 			</div>
 			{context.isMobile ? (
 				<Fragment>
@@ -126,7 +126,7 @@ const Header = ({selectedPage}: HeaderProps): React.ReactElement => {
 							aria-hidden="true"
 						/>
 					</ConditionallyClickableLink>
-					<ConditionallyClickableLink href="/contact" className={[roundedStyles.roundedButton, styles.consultationButton].join(" ")}>
+					<ConditionallyClickableLink href="/contact" className={styles.consultationButton}>
 						FREE CONSULTATION
 					</ConditionallyClickableLink>
 					<nav role="navigation" aria-label="Main menu" style={{display: 'flex'}}>

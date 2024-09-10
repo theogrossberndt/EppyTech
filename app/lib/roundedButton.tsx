@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import styles from "./roundedButton.module.css";
 
 interface RoundedButtonProps extends React.ComponentPropsWithoutRef<"button"> {
@@ -10,15 +11,15 @@ interface RoundedButtonProps extends React.ComponentPropsWithoutRef<"button"> {
 	className?: string;
 */
 
-const RoundedButton = ({tooltip, ...buttonProps}: RoundedButtonProps) => {
+const RoundedButton = forwardRef(({tooltip, ...buttonProps}: RoundedButtonProps, ref) => {
 	return (
-		<button className={[styles.roundedButton, buttonProps.className ?? ""].join(" ")} {...buttonProps}>
+		<button ref={ref} className={[styles.roundedButton, buttonProps.className ?? ""].join(" ")} {...buttonProps}>
 				{buttonProps.children}
 				{tooltip && (
 					tooltip
 				)}
 		</button>
 	);
-}
+});
 
 export default RoundedButton;

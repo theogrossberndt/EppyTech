@@ -26,6 +26,7 @@ const AppProvider = ({children}: AppProviderProps): React.ReactNode => {
 			console.log(document.activeElement?.tagName, event.code);
 			if (document.activeElement?.tagName == 'DIV'){
 				console.log("CLICK");
+				event.preventDefault();
 				(document.activeElement as HTMLDivElement)?.click();
 			}
 		}

@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import styles from "./footer.module.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -13,16 +13,37 @@ import RoundedButton from '@/app/lib/roundedButton.tsx';
 
 const Footer = (): React.ReactElement => {
 	const [ popUpShowing, setPopUpShowing ] = useState<boolean>(false);
-	const toggleShowing = (e: React.MouseEvent<HTMLElement>) => setPopUpShowing((oldShowing: boolean) => !oldShowing)
+	const complianceRef = useRef<HTMLDivElement>();
+
+	const closeModal = (e?: React.MouseEvent<HTMLElement>) => {
+		if (complianceRef.current);
+			complianceRef.current.focus();
+		setPopUpShowing(false);
+	}
+
+	const keyListener = (e: React.KeyboardEvent<HTMLElement>) => {
+		if (e.key == 'Escape')
+			closeModal();
+		if (popUpShowing && e.key == 'Tab')
+			e.preventDefault();
+	}
+
+	useEffect(() => {
+		document.addEventListener('keydown', keyListener);
+		return () => {
+			document.removeEventListener('keydown', keyListener);
+		}
+	}, [popUpShowing, setPopUpShowing]);
+
 	return (
 		<Fragment>
 			{popUpShowing && (<div>
-				<div className={styles.popUpBg} onClick={toggleShowing}/>
-				<div className={styles.popUpCard}>
-					<div className={styles.popUpRowCentered}>
+				<div className={styles.popUpBg} onClick={closeModal}/>
+				<div className={styles.popUpCard} role="dialog" aria-labelledby="cardTitle" aria-describedby="cardDesc">
+					<div className={styles.popUpRowCentered} id="cardTitle">
 						WCAG Compliance
 					</div>
-					<div>
+					<div id="cardDesc">
 						We strive to adhere to current Web Content Accessibility Guidelines (WCAG) Level AA standards in an effort to provide an
 						accessible website for all users. We have completed a manual audit of all content to assess and improve our compliance.
 						This website does include third party widgets for which we cannot control compliance. If you have any
@@ -32,7 +53,10 @@ const Footer = (): React.ReactElement => {
 						to remediate any issues quickly and effectively, and provide any assistance or information directly.
 					</div>
 					<div className={styles.popUpRowCentered}>
-						<RoundedButton onClick={toggleShowing}>Close</RoundedButton>
+						<RoundedButton onClick={closeModal} ref={(e: HTMLElement | null) => {
+							if (e)
+								e.focus();
+						}}>Close</RoundedButton>
 					</div>
 				</div>
 			</div>)}
@@ -63,7 +87,7 @@ const Footer = (): React.ReactElement => {
 					</div>
 					<div className={styles.linkList}>
 						<Link href="/contact" className={styles.link}>CONTACT US</Link>
-						<span className={styles.link} onClick={toggleShowing}>COMPLIANCE</span>
+						<div className={styles.link} onClick={(e: React.MouseEvent<HTMLDivElement>) => setPopUpShowing(true)} tabIndex={0} ref={complianceRef}>COMPLIANCE</div>
 						<Link href="/signIn" className={styles.link}>INTERNAL TOOLS</Link>
 					</div>
 				</div>

@@ -6,12 +6,16 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 config.autoAddCss = false;
 
 import type { Metadata } from "next";
-import { Maven_Pro } from "next/font/google";
+//import { Maven_Pro } from "next/font/google";
+import localFont from 'next/font/local';
 import "./globals.css";
 import AppProvider from "@/app/appProvider.tsx";
 
 //const inter = Dancing_Script({ subsets: ["latin"] });
-const inter = Maven_Pro({ subsets: ["latin"] });
+// TODO: Look into self hosting font for faster load time
+// https://fonts.google.com/knowledge/using_type/self_hosting_web_fonts
+//const inter = Maven_Pro({ subsets: ["latin"] });
+const inter = localFont({src: './Maven.ttf'})
 
 export const metadata: Metadata = {
   title: "Eppy Tech",

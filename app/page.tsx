@@ -14,6 +14,7 @@ export default function Page() {
 }
 
 export async function generateMetadata({params, searchParams}: Props, parent: ResolvingMetadata): Promise<Metadata> {
+//	console.log(searchParams);
 	if (searchParams.service && isServiceSlug(searchParams.service as string))
 		return getMetadata(searchParams.service as string)
 

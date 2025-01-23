@@ -31,3 +31,8 @@ h1 {
 h2 {
 	color: #4977bb;
 }
+
+button, 
+input {
+    font-family: inherit;
+}

@@ -8,8 +8,80 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	flex-direction: column;
 }
 
+.header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1.5rem 2rem;
+	background: #fff;
+	box-shadow: 0px 0px 16px rgba(73, 120, 187, 0.3);
+	width: 100vw;
+	z-index: 2;
+}
+
+.inventoryContent {
+	flex-grow: 1;
+	background: #fff;
+	width: 100vw;
+	padding: 1.5rem 2rem;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+.tableHeader {
+	display: flex;
+	flex-direction: row;
+	
+}
+
+.searchBar {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	align-items: center;
+}
+
+.icon {
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+.searchField + label > * {
+	padding: none;
+	border: none;
+	background: none;
+	border-radius: 100vh;
+	padding: 1rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-left: 0.5rem;
+}
+
+.searchField {
+	flex-grow: 1;
+	font-size: 1rem;
+	padding: 1rem;
+	border-radius: 100vw;
+	border: none;
+	outline: solid 2px;
+}
+
+.searchField:focus {
+	outline-color: rgb(73, 120, 187);
+}
+
+.searchField:focus + label > * {
+	color: rgb(73, 120, 187);
+}
+
+/*   Old */
 .card {
 	background-color: #fff;
 	border-radius: 2rem;
@@ -56,11 +128,6 @@
 	color: rgb(73, 120, 187);
 }
 
-.icon {
-	width: 2rem;
-	height: 2rem;
-	padding-right: 1rem;
-}
 
 .inputLine > input[type='submit'] {
 	background-color:  rgb(73, 120, 187);

@@ -54,7 +54,7 @@
 	outline-color: rgb(73, 120, 187);
 }
 
-.inputLine > input:focus + label {
+.inputLine > input:focus ~ label {
 	color: rgb(73, 120, 187);
 }
 

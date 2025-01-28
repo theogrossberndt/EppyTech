@@ -88,7 +88,7 @@ const Footer = (): React.ReactElement => {
 					<div className={styles.linkList}>
 						<Link href="/contact" className={styles.link}>CONTACT US</Link>
 						<div className={styles.link} onClick={(e: React.MouseEvent<HTMLDivElement>) => setPopUpShowing(true)} tabIndex={0} ref={complianceRef}>COMPLIANCE</div>
-						<Link href="/signIn" className={styles.link}>INTERNAL TOOLS</Link>
+						<Link href="/internalTools" className={styles.link}>INTERNAL TOOLS</Link>
 					</div>
 				</div>
 			</footer>

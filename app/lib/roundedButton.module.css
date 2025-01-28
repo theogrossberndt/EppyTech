@@ -22,3 +22,17 @@
 .roundedButton:active {
 	background: #e0e0e0;
 }
+
+.themeButton {
+	background-color: #4977BB;
+	color: #fff;
+}
+
+.themeButton:hover {
+	background-color: #5b85c2;
+}
+
+.themeButton:active {
+	background-color: #35598e;
+}
+

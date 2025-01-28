@@ -3,6 +3,7 @@ import styles from "./roundedButton.module.css";
 
 interface RoundedButtonProps extends React.ComponentPropsWithoutRef<"button"> {
 	tooltip?: string;
+	themed?: boolean;
 }
 /*
 	children?: React.ReactNode | Array<React.ReactNode>;
@@ -11,9 +12,9 @@ interface RoundedButtonProps extends React.ComponentPropsWithoutRef<"button"> {
 	className?: string;
 */
 
-const RoundedButton = forwardRef(({tooltip, ...buttonProps}: RoundedButtonProps, ref) => {
+const RoundedButton = forwardRef(({tooltip, themed = false, ...buttonProps}: RoundedButtonProps, ref) => {
 	return (
-		<button ref={ref} className={[styles.roundedButton, buttonProps.className ?? ""].join(" ")} {...buttonProps}>
+		<button ref={ref} className={[styles.roundedButton, themed ? styles.themeButton : "", buttonProps.className ?? ""].join(" ")} {...buttonProps}>
 				{buttonProps.children}
 				{tooltip && (
 					tooltip

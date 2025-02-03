@@ -4,18 +4,47 @@
 	overflow-x: hidden;
 }
 
+.ag-cell-focus,.ag-cell-no-focus{
+  border:none !important;
+}
+
+.noBorder.ag-cell:focus{
+  border:none !important;
+  outline: none;
+}
+
 .rowNormalEven {
 	background-color: #d9d9d9;
+	border: none;
+}
+
+.rowNormalEven:focus {
+	border: none;
 }
 
 .rowNormalOdd {
 	background-color: #f0f0f0;
+	border: none;
+}
+
+.rowNormalOdd:selected {
+	border: none;
 }
 
 .rowRedEven {
 	background-color: #E09E9E;
+	border: none;
+}
+
+.rowRedEven:selected {
+	border: none;
 }
 
 .rowRedOdd {
 	background-color: #EFCCCC;
+	border: none;
+}
+
+.rowRedOdd:selected {
+	border: none;
 }

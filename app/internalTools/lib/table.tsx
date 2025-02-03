@@ -1,7 +1,8 @@
-import { useRef, useState, useMemo, memo, useCallback } from 'react';
+import { useRef, useState, useMemo, memo, useCallback, useLayoutEffect } from 'react';
 import styles from './table.module.css';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
+import { AnimatePresence, motion } from "framer-motion"
 
 // TODO: Pair down modules
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -12,10 +13,10 @@ const themeBase = {
 	headerFontWeight: 'bold'
 };
 
-const myTheme = themeQuartz.withParams(themeBase);
+const myTheme = themeQuartz.withParams({...themeBase, border: 'none'});
 
-const makeRandomItem = () => {
-	return {product: 'Product', location: 'Here', tags: 'Printer', stock: 1};
+const makeRandomItem = (i) => {
+	return {product: 'Product ' + i, location: 'Here', tags: 'Printer', stock: 1, i: i, fw: false};
 }
 
 export default function InventoryTable(){
@@ -25,7 +26,8 @@ export default function InventoryTable(){
 	const eightChar = charWidth*8+padding;
 	console.log("charWidth", charWidth);
 
-	const [ rowData, setRowData ] = useState(Array(10).fill().map(d => makeRandomItem()));
+	const [ expanded, setExpanded ] = useState<number | null>(null);
+	const [ rowData, setRowData ] = useState(Array(10).fill().map((d, i) => makeRandomItem(i)));
 	const [ colDefs, setColDefs ] = useState([
 		{field: 'product', minWidth: eightChar*2, lockPosition: 'left', lockVisible: true, flex: 2},
 		{field: 'location', minWidth: eightChar, initialWidth: eightChar, flex: 1},
@@ -33,11 +35,14 @@ export default function InventoryTable(){
 		{field: 'stock', lockPosition: 'right', minWidth: fiveChar, initialWidth: fiveChar, maxWidth: fiveChar*2, resizable: false, lockVisible: true}
 	]);
 
+	const isEven = (rowIndex: number): boolean =>
+		(rowIndex + (expanded !== null && rowIndex > expanded ? 1 : 0))%2 === 0;
+
 	const rowClassRules = {
-		[styles.rowNormalEven]: params => params.data.stock > 0 && params.rowIndex % 2 === 0,
-		[styles.rowNormalOdd]: params => params.data.stock > 0 && params.rowIndex % 2 === 1,
-		[styles.rowRedEven]: params => params.data.stock === 0 && params.rowIndex % 2 === 0,
-		[styles.rowRedOdd]: params => params.data.stock === 0 && params.rowIndex % 2 === 1,
+		[styles.rowNormalEven]: params => params.data.stock > 0 && isEven(params.rowIndex),
+		[styles.rowNormalOdd]: params => params.data.stock > 0 && !isEven(params.rowIndex),
+		[styles.rowRedEven]: params => params.data.stock === 0 && isEven(params.rowIndex),
+		[styles.rowRedOdd]: params => params.data.stock === 0 && !isEven(params.rowIndex),
 	}
 
 	const gridOptions = {
@@ -51,7 +56,9 @@ export default function InventoryTable(){
 		},
 		defaultColDef: {
 			flex: 1,
+			cellClass: styles.noBorder,
 		},
+		suppressCellFocus: true,
 //		colResizeDefault: 'shift'
 	}
 
@@ -154,14 +161,67 @@ export default function InventoryTable(){
 
 	}, [])
 
+	const fullWidthCellRenderer = useCallback(ClickPanelRenderer, []);
+
+	const closeAnyPanels = (rowData) => rowData.filter(row => !row.fw);
+	const createPanel = (rowData, index: number) => rowData.toSpliced(index+1, 0, {index: index, fw: true, });
+	const openPanel = (indexIn: number) => {
+		const index = expanded < indexIn ? indexIn-1 : indexIn;
+		if (expanded === index){
+			setRowData(rowData => closeAnyPanels(rowData));
+			setExpanded(null);
+		} else {
+			setRowData(rowData => createPanel(closeAnyPanels(rowData), index));
+			setExpanded(index);
+		}
+	}
+
+//	const closeAnyPanels = (rowData) => rowData.map(d => ({...d, fw: false}));
+//	const openPanel = (rowData, index: number) => closeAnyPanels(rowData).map((d, i: number) => ({...d, fw: i === index}))
+
 	return (
 		<div className={styles.divTable}>
 			<AgGridReact rowData={rowData} columnDefs={colDefs} rowClassRules={rowClassRules} theme={myTheme} gridOptions={gridOptions} defaultColDef={gridOptions.defaultColDef}
 				onColumnResized={onResize}
+				isFullWidthRow={(params) => params.rowNode.data.fw}
+				fullWidthCellRenderer={fullWidthCellRenderer}
+				onRowClicked={(event) => openPanel(event.rowIndex)}
 			/>
 		</div>
 	);
 };
+
+const ClickPanelRenderer = (props) => {
+	const measurer = useRef(null);
+	const [ height, setHeight ] = useState<number | null>(null);
+
+	useLayoutEffect(() => {
+		if (measurer.current){
+			const calcHeight = measurer.current.offsetHeight;
+			setHeight(calcHeight);
+			props.node.setRowHeight(calcHeight);
+			props.api.onRowHeightChanged();
+		}
+	})
+
+	console.log(props);
+
+	const cn = (props.node.rowIndex-1) % 2 == 0 ?
+		styles.rowNormalEven :
+		styles.rowNormalOdd;
+
+	return (
+		<AnimatePresence>
+		<motion.div initial={{opacity: 0, height: 0}} animate={{opacity: 1, height: height}} exit={{opacity: 0, height: 0}} style={{overflow: 'hidden'}}>
+			<div ref={measurer} style={{...themeBase, padding: '1rem'}} className={cn}>
+				<h2>Hi</h2>
+				<h2>Hi</h2>
+				<h2>Hi</h2>
+			</div>
+		</motion.div>
+		</AnimatePresence>
+	);
+}
 
 const useCharacterWidth = (weight?: string) => {
   const didCompute = useRef(false);
